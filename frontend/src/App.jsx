@@ -19,6 +19,7 @@ function App() {
   const [activePage, setActivePage] = useState('boss-ai');
   const [toastMessage, setToastMessage] = useState(null);
   const [analysisData, setAnalysisData] = useState(null);
+  const [chatMessages, setChatMessages] = useState([]);
 
   const showToast = (msg) => {
     setToastMessage(msg);
@@ -154,6 +155,8 @@ function App() {
               onTriggerToast={showToast}
               setAnalysisData={handleUpdateAnalysisData}
               analysisData={analysisData}
+              chatMessages={chatMessages}
+              setChatMessages={setChatMessages}
             />
           )}
 

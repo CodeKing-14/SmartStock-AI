@@ -51,35 +51,51 @@ def boss_ai_offline(store: dict, analyst_output: dict, pricing_output: dict,
             lines.append(f"**{product_name}**: {direction} by {data['percentage']}% to ₹{data['new_price']}. Expected Vol: {data['expected_volume']}. {data['reasoning']}")
     lines.append("")
 
-    lines.append("### VALIDATION AGENTS (Risk Flags)")
-    flags_found = False
-    
+    lines.append("### INVENTORY AI")
     for sku in [p["product_id"] for p in store["products"]]:
         product_name = next(p["name"] for p in store["products"] if p["product_id"] == sku)
-        
-        # Inventory AI
-        if inventory_output.get(sku, {}).get("flag"):
-            flags_found = True
-            risk = inventory_output[sku]["risk"].upper()
-            lines.append(f"⚠️ **{product_name}** (Inventory AI): {risk} RISK (in {inventory_output[sku]['days_until_issue']} days). {inventory_output[sku]['recommendation']}")
-            
-        # Spoilage AI
-        if spoilage_output.get(sku, {}).get("flag"):
-            flags_found = True
-            lines.append(f"☣️ **{product_name}** (Spoilage AI): SPOILAGE RISK. {spoilage_output[sku]['recommendation']}")
+        out = inventory_output.get(sku, {})
+        if out.get("flag"):
+            risk = out.get("risk", "UNKNOWN").upper()
+            days = out.get("days_until_issue", "?")
+            rec = out.get("recommendation", "")
+            lines.append(f"⚠️ **{product_name}**: {risk} RISK (in {days} days). {rec}")
+        else:
+            rec = out.get("recommendation", "Inventory levels are sufficient.")
+            lines.append(f"✅ **{product_name}**: SAFE. {rec}")
+    lines.append("")
 
-        # Basket AI
-        if basket_output.get(sku, {}).get("flag"):
-            flags_found = True
-            lines.append(f"🛒 **{product_name}** (Basket AI): CANNIBALIZATION RISK. {basket_output[sku]['recommendation']}")
+    lines.append("### SPOILAGE AI")
+    for sku in [p["product_id"] for p in store["products"]]:
+        product_name = next(p["name"] for p in store["products"] if p["product_id"] == sku)
+        out = spoilage_output.get(sku, {})
+        if out.get("flag"):
+            rec = out.get("recommendation", "")
+            lines.append(f"☣️ **{product_name}**: SPOILAGE RISK. {rec}")
+        else:
+            lines.append(f"✅ **{product_name}**: SAFE. No Expiry Risk.")
+    lines.append("")
 
-        # Game Theory AI
-        if game_theory_output.get(sku, {}).get("flag"):
-            flags_found = True
-            lines.append(f"⚔️ **{product_name}** (Game Theory AI): RETALIATION RISK. {game_theory_output[sku]['recommendation']}")
+    lines.append("### BASKET AI")
+    for sku in [p["product_id"] for p in store["products"]]:
+        product_name = next(p["name"] for p in store["products"] if p["product_id"] == sku)
+        out = basket_output.get(sku, {})
+        if out.get("flag"):
+            rec = out.get("recommendation", "")
+            lines.append(f"🛒 **{product_name}**: CANNIBALIZATION RISK. {rec}")
+        else:
+            lines.append(f"✅ **{product_name}**: SAFE. No Cross-Product Risks.")
+    lines.append("")
 
-    if not flags_found:
-        lines.append("✅ No risks flagged by Validation Agents for proposed pricing.")
+    lines.append("### GAME THEORY AI")
+    for sku in [p["product_id"] for p in store["products"]]:
+        product_name = next(p["name"] for p in store["products"] if p["product_id"] == sku)
+        out = game_theory_output.get(sku, {})
+        if out.get("flag"):
+            rec = out.get("recommendation", "")
+            lines.append(f"⚔️ **{product_name}**: RETALIATION RISK. {rec}")
+        else:
+            lines.append(f"✅ **{product_name}**: SAFE. Low Retaliation Risk.")
     lines.append("")
 
     lines.append("### LOGISTICS AI (Transfers)")

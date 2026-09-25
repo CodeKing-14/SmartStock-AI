@@ -15,6 +15,23 @@ export default function LogisticsAiPage({ onBackToBoss, onNavigateToPage, analys
   const logisticsData = analysisData?.logistics_global || analysisData?.logistics;
   const transfers = logisticsData?.transfers || [];
 
+  if (analysisData?.run_id === 'ingest_only') {
+    return (
+      <div style={{ padding: '40px', textAlign: 'center', background: 'white', borderRadius: '8px' }}>
+        <Truck size={48} color="#7c3aed" style={{ marginBottom: '16px' }} />
+        <h3 style={{ margin: '0 0 8px 0', color: '#334155' }}>Knowledge Document Ingested</h3>
+        <p style={{ color: '#64748b' }}>This document was processed by Boss AI for general knowledge.</p>
+        <p style={{ color: '#64748b' }}>To view Logistics AI recommendations, please upload a <b>Retail Data</b> file with store products and inventory.</p>
+        <button
+          onClick={onBackToBoss}
+          style={{ marginTop: '20px', padding: '8px 16px', background: '#7c3aed', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
+        >
+          Go to Boss AI
+        </button>
+      </div>
+    );
+  }
+
   if (!analysisData || !logisticsData) {
     return (
       <div style={{ padding: '40px', textAlign: 'center', background: 'white', borderRadius: '8px' }}>

@@ -20,7 +20,7 @@ import {
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 
-export default function BossAiPage({ onTriggerToast, setAnalysisData, analysisData, onNavigateToPage }) {
+export default function BossAiPage({ onTriggerToast, setAnalysisData, analysisData, onNavigateToPage, chatMessages = [], setChatMessages }) {
 
 
   const handleDownloadPDF = async () => {
@@ -45,7 +45,7 @@ export default function BossAiPage({ onTriggerToast, setAnalysisData, analysisDa
     }
   };
 
-  const [chatMessages, setChatMessages] = useState([]);
+  // chatMessages and setChatMessages are now passed as props
   const [chatInput, setChatInput] = useState('');
   const [attachedFile, setAttachedFile] = useState(null);
   const fileInputRef = React.useRef(null);
@@ -71,19 +71,19 @@ export default function BossAiPage({ onTriggerToast, setAnalysisData, analysisDa
     }
   };
 
-  const handleSendMessage = async (e) => {
-    e.preventDefault();
-    if (!chatInput.trim() && !attachedFile) return;
+  const handleSendMessage = async (e, directText = null) => {
+    if (e) e.preventDefault();
+    const textToSend = directText !== null ? directText : chatInput;
+    if (!textToSend.trim() && !attachedFile) return;
 
     const newMessages = [...chatMessages, { 
       sender: 'user', 
-      text: chatInput,
+      text: textToSend,
       attachment: attachedFile
     }];
     setChatMessages(newMessages);
     
     const fileToSend = attachedFile ? attachedFile.rawFile : null;
-    const currentInput = chatInput;
     
     setChatInput('');
     setAttachedFile(null);
@@ -112,7 +112,12 @@ export default function BossAiPage({ onTriggerToast, setAnalysisData, analysisDa
             const msgs = [...prev];
             msgs[msgs.length - 1] = { 
               sender: 'boss', 
-              text: `🎯 RAG & Boss AI Analysis Complete (Run ID: ${data.run_id})\n\n${verdictText}` 
+              text: `🎯 RAG & Boss AI Analysis Complete (Run ID: ${data.run_id})\n\n${verdictText}`,
+              suggestions: [
+                "How will we get a profit?",
+                "If I change the price, what is the demand?",
+                "Which products are at risk of stockout?"
+              ]
             };
             return msgs;
           });
@@ -140,7 +145,7 @@ export default function BossAiPage({ onTriggerToast, setAnalysisData, analysisDa
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ message: currentInput }),
+          body: JSON.stringify({ message: textToSend }),
         });
 
         if (response.ok) {
@@ -151,7 +156,15 @@ export default function BossAiPage({ onTriggerToast, setAnalysisData, analysisDa
           }
           setChatMessages(prev => {
             const msgs = [...prev];
-            msgs[msgs.length - 1] = { sender: 'boss', text: data.answer };
+            msgs[msgs.length - 1] = { 
+              sender: 'boss', 
+              text: data.answer,
+              suggestions: [
+                "How will we get a profit?",
+                "If I change the price, what is the demand?",
+                "Are there any cannibalization risks?"
+              ]
+            };
             return msgs;
           });
         } else {
@@ -591,13 +604,45 @@ export default function BossAiPage({ onTriggerToast, setAnalysisData, analysisDa
                   </div>
                 )}
                 {msg.text}
+                {msg.suggestions && msg.suggestions.length > 0 && (
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginTop: '12px' }}>
+                    {msg.suggestions.map((suggestion, sIdx) => (
+                      <button
+                        key={sIdx}
+                        type="button"
+                        onClick={() => handleSendMessage(null, suggestion)}
+                        style={{
+                          background: 'white',
+                          border: '1px solid #bfdbfe',
+                          color: '#1d4ed8',
+                          padding: '6px 12px',
+                          borderRadius: '16px',
+                          fontSize: '12px',
+                          fontWeight: 600,
+                          cursor: 'pointer',
+                          transition: 'all 0.2s'
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.background = '#eff6ff';
+                          e.currentTarget.style.borderColor = '#93c5fd';
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.background = 'white';
+                          e.currentTarget.style.borderColor = '#bfdbfe';
+                        }}
+                      >
+                        {suggestion}
+                      </button>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
           ))}
         </div>
 
         <form 
-          onSubmit={handleSendMessage}
+          onSubmit={(e) => handleSendMessage(e)}
           style={{
             display: 'flex',
             flexDirection: 'column',

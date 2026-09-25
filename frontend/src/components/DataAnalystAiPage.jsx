@@ -11,6 +11,23 @@ export default function DataAnalystAiPage({ onBackToBoss, onNavigateToPage, anal
   const stores = analysisData?.stores || {};
   const storeIds = Object.keys(stores);
 
+  if (analysisData?.run_id === 'ingest_only') {
+    return (
+      <div style={{ padding: '40px', textAlign: 'center', background: 'white', borderRadius: '8px' }}>
+        <BarChart3 size={48} color="#4f46e5" style={{ marginBottom: '16px' }} />
+        <h3 style={{ margin: '0 0 8px 0', color: '#334155' }}>Knowledge Document Ingested</h3>
+        <p style={{ color: '#64748b' }}>This document was processed by Boss AI for general knowledge.</p>
+        <p style={{ color: '#64748b' }}>To view Data Analyst metrics, please upload a <b>Retail Data</b> file with store products and inventory.</p>
+        <button
+          onClick={onBackToBoss}
+          style={{ marginTop: '20px', padding: '8px 16px', background: '#4f46e5', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
+        >
+          Go to Boss AI
+        </button>
+      </div>
+    );
+  }
+
   if (!analysisData || storeIds.length === 0) {
     return (
       <div style={{ padding: '40px', textAlign: 'center', background: 'white', borderRadius: '8px' }}>
