@@ -114,3 +114,54 @@ def solve_transfers(retail_data: dict, inventory_results: dict, logistics_data: 
         "total_cost": total_cost,
         "total_roi": total_roi
     }
+
+if __name__ == "__main__":
+    import json
+    from pathlib import Path
+    from pricing_ai import propose_for_store
+    from inventory_ai import review_store
+    
+    base_dir = Path(__file__).resolve().parent.parent
+    with open(base_dir / "data" / "retail_data.json", "r") as f:
+        data = json.load(f)
+    with open(base_dir / "data" / "pricing_config.json", "r") as f:
+        cfg = json.load(f)
+    with open(base_dir / "data" / "logistics_data.json", "r") as f:
+        logistics = json.load(f)
+        
+    inv_results = {}
+    price_results = {}
+    for s in data["stores"]:
+        price_results[s["store_id"]] = propose_for_store(s, cfg)
+        inv_results[s["store_id"]] = review_store(s, price_results[s["store_id"]])
+        
+    results = solve_transfers(data, inv_results, logistics, price_results)
+    
+    print("==================================================")
+    print(f"LOGISTICS AI: SIMPLE SUMMARY")
+    print("==================================================\n")
+    
+    transfers = results.get("transfers", [])
+    if not transfers:
+        print("[+] No profitable transfers found.")
+    else:
+        for t in transfers:
+            # Need product name from data
+            p_name = t["sku"]
+            for s in data["stores"]:
+                for p in s["products"]:
+                    if p["product_id"] == t["sku"]:
+                        p_name = p["name"]
+                        break
+                        
+            print(f"[+] Transfer {t['qty']} units of {p_name} ({t['sku']})")
+            print(f"    -> Route: Store {t['from_store']} to Store {t['to_store']} ({t['distance_km']} km)")
+            print(f"    -> Logistics Cost: INR {t['transfer_cost']}")
+            print(f"    -> Profit Saved: INR {t['profit_saved']}")
+            print(f"    -> ROI: {t['roi_percent']}%\n")
+            
+    print("--------------------------------------------------")
+    print(f"Total Transfers: {len(transfers)}")
+    print(f"Total Logistics Cost: INR {results.get('total_cost', 0)}")
+    print(f"Total Network ROI: INR {results.get('total_roi', 0)}")
+    print("==================================================\n")

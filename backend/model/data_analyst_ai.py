@@ -68,4 +68,16 @@ if __name__ == "__main__":
     
     meta = {k: v for k, v in data.items() if k != "stores"}
     store = data["stores"][0]
-    print(json.dumps(analyze_store(store, meta), indent=2))
+    results = analyze_store(store, meta)
+    
+    print("==================================================")
+    print(f"DATA ANALYST AI: SIMPLE SUMMARY")
+    print(f"Store: {store['store_name']}")
+    print("==================================================\n")
+    
+    for sku, p_data in results.items():
+        product_name = next(p["name"] for p in store["products"] if p["product_id"] == sku)
+        print(f"[+] {product_name}:")
+        print(f"    -> Findings: {p_data['summary']}")
+        print(f"    -> Confidence: {p_data['confidence'] * 100}%")
+        print(f"    -> Audit Hash: {p_data['audit_trail']['data_hash']}\n")

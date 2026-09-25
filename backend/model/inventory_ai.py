@@ -52,3 +52,36 @@ def review_store(store: dict, pricing_proposals: dict) -> dict:
         pricing_prop = pricing_proposals.get(sku, {})
         results[sku] = check_inventory(product, pricing_prop)
     return results
+
+if __name__ == "__main__":
+    import json
+    from pathlib import Path
+    from pricing_ai import propose_for_store
+    
+    base_dir = Path(__file__).resolve().parent.parent
+    with open(base_dir / "data" / "retail_data.json", "r") as f:
+        data = json.load(f)
+    with open(base_dir / "data" / "pricing_config.json", "r") as f:
+        cfg = json.load(f)
+        
+    store = data["stores"][0] # Coimbatore Central (S1) has a stockout example
+    
+    pricing = propose_for_store(store, cfg)
+    results = review_store(store, pricing)
+    
+    print("==================================================")
+    print(f"INVENTORY AI: SIMPLE SUMMARY")
+    print(f"Store: {store['store_name']}")
+    print("==================================================\n")
+    
+    for sku, p_data in results.items():
+        product_name = next(p["name"] for p in store["products"] if p["product_id"] == sku)
+        
+        status = f"CRITICAL: {p_data['risk'].upper()} RISK" if p_data["flag"] else "SAFE: No Risk"
+        print(f"[+] {product_name}: {status}")
+        if p_data["flag"]:
+            print(f"    -> Issue: In {p_data['days_until_issue']} days")
+            print(f"    -> Stock vs Demand: {p_data['current_inventory']} stock vs {p_data['demanded_volume']} demand")
+            print(f"    -> Recommendation: {p_data['recommendation']}\n")
+        else:
+            print(f"    -> {p_data['recommendation']}\n")

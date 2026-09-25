@@ -16,12 +16,24 @@ from data_analyst_ai import analyze_store
 from pricing_ai import propose_for_store
 from inventory_ai import review_store
 from logistics_ai import solve_transfers
+from spoilage_ai import review_store_spoilage
+from basket_ai import analyze_basket
+from game_theory_ai import review_store_competition
 
-def boss_ai_offline(store: dict, analyst_output: dict, pricing_output: dict, inventory_output: dict, transfers: list, meta: dict) -> str:
-    """Synthesizes the 4 agents' outputs into a markdown report for a store."""
+def boss_ai_offline(store: dict, analyst_output: dict, pricing_output: dict, 
+                    inventory_output: dict, spoilage_output: dict, 
+                    basket_output: dict, game_theory_output: dict, 
+                    transfers: list, meta: dict, negotiation_history: list) -> str:
+    """Synthesizes the 7 agents' outputs into a markdown report for a store."""
     lines = []
     lines.append(f"## 📊 FINAL RECOMMENDATION — {store['store_name']} ({store['store_id']})")
     lines.append("")
+
+    if negotiation_history:
+        lines.append("### BOSS AI (Negotiation Summary)")
+        for h in negotiation_history:
+            lines.append(f"- **{h['sku']}**: {h['reason']}")
+        lines.append("")
 
     lines.append("### DATA ANALYST (Factual Summary)")
     for sku, data in analyst_output.items():
@@ -39,15 +51,35 @@ def boss_ai_offline(store: dict, analyst_output: dict, pricing_output: dict, inv
             lines.append(f"**{product_name}**: {direction} by {data['percentage']}% to ₹{data['new_price']}. Expected Vol: {data['expected_volume']}. {data['reasoning']}")
     lines.append("")
 
-    lines.append("### INVENTORY AI (Risk Flags)")
-    flags = [ (sku, data) for sku, data in inventory_output.items() if data["flag"] ]
-    if not flags:
-        lines.append("✅ No inventory risks flagged for proposed pricing.")
-    else:
-        for sku, data in flags:
-            product_name = next(p["name"] for p in store["products"] if p["product_id"] == sku)
-            risk = data["risk"].upper()
-            lines.append(f"⚠️ **{product_name}**: {risk} RISK (in {data['days_until_issue']} days). {data['recommendation']}")
+    lines.append("### VALIDATION AGENTS (Risk Flags)")
+    flags_found = False
+    
+    for sku in [p["product_id"] for p in store["products"]]:
+        product_name = next(p["name"] for p in store["products"] if p["product_id"] == sku)
+        
+        # Inventory AI
+        if inventory_output.get(sku, {}).get("flag"):
+            flags_found = True
+            risk = inventory_output[sku]["risk"].upper()
+            lines.append(f"⚠️ **{product_name}** (Inventory AI): {risk} RISK (in {inventory_output[sku]['days_until_issue']} days). {inventory_output[sku]['recommendation']}")
+            
+        # Spoilage AI
+        if spoilage_output.get(sku, {}).get("flag"):
+            flags_found = True
+            lines.append(f"☣️ **{product_name}** (Spoilage AI): SPOILAGE RISK. {spoilage_output[sku]['recommendation']}")
+
+        # Basket AI
+        if basket_output.get(sku, {}).get("flag"):
+            flags_found = True
+            lines.append(f"🛒 **{product_name}** (Basket AI): CANNIBALIZATION RISK. {basket_output[sku]['recommendation']}")
+
+        # Game Theory AI
+        if game_theory_output.get(sku, {}).get("flag"):
+            flags_found = True
+            lines.append(f"⚔️ **{product_name}** (Game Theory AI): RETALIATION RISK. {game_theory_output[sku]['recommendation']}")
+
+    if not flags_found:
+        lines.append("✅ No risks flagged by Validation Agents for proposed pricing.")
     lines.append("")
 
     lines.append("### LOGISTICS AI (Transfers)")
@@ -86,19 +118,65 @@ def run_pipeline(retail_data: dict,
     inventory_results_network = {}
     pricing_results_network = {}
 
-    # Run Analyst, Pricing, Inventory for all stores first to gather network state
     for store in stores:
         store_id = store["store_id"]
         
+        # 1. Analyst runs once
         analyst_output = analyze_store(store, meta)
-        pricing_output = propose_for_store(store, pricing_config)
+        
+        # 2. Iterative Negotiation Loop (Boss AI coordinating)
+        negotiation_history = []
+        constraints_map = {}
+        
+        # Pass 1: Unconstrained Pricing
+        pricing_output = propose_for_store(store, pricing_config, constraints_map)
+        
         inventory_output = review_store(store, pricing_output)
+        spoilage_output = review_store_spoilage(store, pricing_output, pricing_config)
+        
+        recalculate = False
+        
+        # Check if constraints need to be enforced by Boss AI
+        for sku in [p["product_id"] for p in store["products"]]:
+            inv = inventory_output.get(sku, {})
+            spoil = spoilage_output.get(sku, {})
+            
+            sku_constraints = {}
+            if inv.get("flag") and inv.get("risk") == "stockout":
+                # Cap volume to what we can fulfill over lead time
+                sku_constraints["volume_cap"] = inv["current_inventory"]
+                negotiation_history.append({"sku": sku, "reason": f"Boss AI forced volume cap of {inv['current_inventory']} due to Stockout risk."})
+                recalculate = True
+                
+            if spoil.get("flag"):
+                # Force fire sale cap
+                sku_constraints["max_price"] = spoil["constraint"]["max_price"]
+                negotiation_history.append({"sku": sku, "reason": f"Boss AI forced max_price of ₹{spoil['constraint']['max_price']} due to Spoilage risk."})
+                recalculate = True
+                
+            if sku_constraints:
+                constraints_map[sku] = sku_constraints
+
+        # Pass 2: Constrained Pricing (if needed)
+        if recalculate:
+            pricing_output = propose_for_store(store, pricing_config, constraints_map)
+            # Re-run validations on new prices
+            inventory_output = review_store(store, pricing_output)
+            spoilage_output = review_store_spoilage(store, pricing_output, pricing_config)
+            
+        # 3. Final Checks (Basket & Game Theory - these flag warnings but don't force constraints mechanically yet)
+        basket_output = analyze_basket(store, pricing_output, pricing_config)
+        game_theory_output = review_store_competition(store, pricing_output, pricing_config)
         
         all_results[store_id] = {
             "store": store,
             "analyst": analyst_output,
             "pricing": pricing_output,
-            "inventory": inventory_output
+            "inventory": inventory_output,
+            "spoilage": spoilage_output,
+            "basket": basket_output,
+            "game_theory": game_theory_output,
+            "negotiation_history": negotiation_history
         }
         
         inventory_results_network[store_id] = inventory_output
@@ -120,7 +198,10 @@ def run_pipeline(retail_data: dict,
     ]
 
     for store_id, r in all_results.items():
-        boss_md = boss_ai_offline(r["store"], r["analyst"], r["pricing"], r["inventory"], transfers, meta)
+        boss_md = boss_ai_offline(
+            r["store"], r["analyst"], r["pricing"], r["inventory"], 
+            r["spoilage"], r["basket"], r["game_theory"], transfers, meta, r["negotiation_history"]
+        )
         r["boss_md"] = boss_md
         report_lines.append(boss_md)
         report_lines.append("---")

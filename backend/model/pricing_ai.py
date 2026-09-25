@@ -19,12 +19,17 @@ def forecast_demand(price: float, p0: float, base: float, comp: float, elasticit
     comp_ratio = _competitor_factor(price, comp, tol, k) / _competitor_factor(p0, comp, tol, k)
     return base * own * comp_ratio
 
-def evaluate_price(price: float, p0: float, cost: float, base: float, comp: float, e: float, g: dict):
+def evaluate_price(price: float, p0: float, cost: float, base: float, comp: float, e: float, g: dict, volume_cap: float = None):
     demand = forecast_demand(price, p0, base, comp, e, g)
+    if volume_cap is not None:
+        demand = min(demand, volume_cap)
     profit = (price - cost) * demand
     return demand, profit
 
-def price_product(product: dict, store: dict, cfg: dict) -> dict:
+def price_product(product: dict, store: dict, cfg: dict, constraints: dict = None) -> dict:
+    if constraints is None:
+        constraints = {}
+        
     g = cfg["global"]
     pc = cfg["products"][product["product_id"]]
     p0, comp, cost = product["our_price"], product["competitor_price"], pc["cost_price"]
@@ -37,16 +42,24 @@ def price_product(product: dict, store: dict, cfg: dict) -> dict:
     lo = max(margin_floor, math.ceil(p0 * (1 - g["max_weekly_change_pct"] / 100)))
     hi = max(math.floor(p0 * (1 + g["max_weekly_change_pct"] / 100)), lo)
 
+    # Apply spoilage max_price constraint if it exists (fire sale)
+    if "max_price" in constraints:
+        hi = min(hi, constraints["max_price"])
+        lo = min(lo, hi) # ensure lo doesn't exceed hi
+
+    volume_cap = constraints.get("volume_cap")
+
     best_price = p0
     best_profit = -float('inf')
     best_demand = 0
 
     for price in range(lo, hi + 1):
-        demand, profit = evaluate_price(price, p0, cost, base, comp, e, g)
+        demand, profit = evaluate_price(price, p0, cost, base, comp, e, g, volume_cap)
         if profit > best_profit:
             best_profit = profit
             best_price = price
             best_demand = demand
+
 
     # Construct the exact output format required
     if best_price > p0:
@@ -82,10 +95,15 @@ def price_product(product: dict, store: dict, cfg: dict) -> dict:
         "risk": risk
     }
 
-def propose_for_store(store: dict, cfg: dict) -> dict:
+def propose_for_store(store: dict, cfg: dict, constraints_map: dict = None) -> dict:
+    if constraints_map is None:
+        constraints_map = {}
+        
     results = {}
     for product in store["products"]:
-        results[product["product_id"]] = price_product(product, store, cfg)
+        sku = product["product_id"]
+        constraints = constraints_map.get(sku, {})
+        results[sku] = price_product(product, store, cfg, constraints)
     return results
 
 if __name__ == "__main__":
@@ -99,4 +117,22 @@ if __name__ == "__main__":
         cfg = json.load(f)
         
     store = data["stores"][0]
-    print(json.dumps(propose_for_store(store, cfg), indent=2))
+    results = propose_for_store(store, cfg)
+    
+    print("==================================================")
+    print(f"PRICING AI: SIMPLE SUMMARY")
+    print(f"Store: {store['store_name']}")
+    print("==================================================\n")
+    
+    for sku, p_data in results.items():
+        product_name = next(p["name"] for p in store["products"] if p["product_id"] == sku)
+        
+        action_text = f"HOLD at INR {p_data['new_price']}"
+        if p_data["action"] == "increase":
+            action_text = f"RAISE price to INR {p_data['new_price']} (+{p_data['percentage']}%)"
+        elif p_data["action"] == "decrease":
+            action_text = f"LOWER price to INR {p_data['new_price']} ({p_data['percentage']}%)"
+            
+        print(f"[+] {product_name}: {action_text}")
+        print(f"    -> Expected Volume: {p_data['expected_volume']} units")
+        print(f"    -> Reasoning: {p_data['reasoning']}\n")

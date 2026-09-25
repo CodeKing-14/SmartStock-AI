@@ -7,9 +7,9 @@
     "volume_weight": 0.15
   },
   "products": {
-    "P1": {"cost_price": 540, "elasticity": -2.5, "festival_uplift": 1.15},
-    "P2": {"cost_price": 138, "elasticity": -2.0, "festival_uplift": 1.10},
-    "P3": {"cost_price": 260, "elasticity": -2.2, "festival_uplift": 1.30},
-    "P4": {"cost_price": 320, "elasticity": -2.6, "festival_uplift": 1.30}
+    "P1": {"cost_price": 540, "elasticity": -2.5, "festival_uplift": 1.15, "category": "staples", "expiry_days_avg": 365, "competitor_retaliation_prob": 0.3},
+    "P2": {"cost_price": 138, "elasticity": -2.0, "festival_uplift": 1.10, "category": "staples", "expiry_days_avg": 180, "competitor_retaliation_prob": 0.9},
+    "P3": {"cost_price": 260, "elasticity": -2.2, "festival_uplift": 1.30, "category": "perishables", "expiry_days_avg": 7, "competitor_retaliation_prob": 0.1},
+    "P4": {"cost_price": 320, "elasticity": -2.6, "festival_uplift": 1.30, "category": "electronics", "expiry_days_avg": 9999, "competitor_retaliation_prob": 0.5}
   }
 }
