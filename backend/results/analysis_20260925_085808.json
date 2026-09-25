@@ -1,0 +1,740 @@
+{
+  "meta": {
+    "chain_name": "FreshMart Retail",
+    "currency": "INR",
+    "week_label": "Week 39 vs Week 38"
+  },
+  "timestamp": "2026-09-25 08:58:08",
+  "run_id": "20260925_085808",
+  "stores": {
+    "S1": {
+      "store_id": "S1",
+      "store_name": "Coimbatore Central",
+      "data_analyst": {
+        "summary": "### Coimbatore Central (S1)\n**Sales**\n- Basmati Rice 5kg: 120 -> 150 units (+25.0%) [significant]\n- Sunflower Oil 1L: 200 -> 190 units (-5.0%)\n- Festive Sweet Box 500g: 60 -> 95 units (+58.3%) [significant]\n- LED String Lights: 30 -> 70 units (+133.3%) [significant]\n**Stock**\n- Basmati Rice 5kg: 90 units, about 4.2 days of cover [low stock]\n- Sunflower Oil 1L: 400 units, about 14.7 days of cover\n- Festive Sweet Box 500g: 40 units, about 2.9 days of cover [low stock]\n- LED String Lights: 25 units, about 2.5 days of cover [low stock]\n**Competitor pricing**\n- Basmati Rice 5kg: ours INR 620 vs competitor INR 590 (+5.1%)\n- Sunflower Oil 1L: ours INR 165 vs competitor INR 155 (+6.5%)\n- Festive Sweet Box 500g: ours INR 350 vs competitor INR 320 (+9.4%)\n- LED String Lights: ours INR 450 vs competitor INR 480 (-6.2%)\n**Upcoming events**\n- Regional Harvest Festival in 3 days",
+        "source": "offline"
+      },
+      "pricing": {
+        "message": "S1 Coimbatore Central: I propose Festive Sweet Box 500g: HOLD ₹350 (stock-capped, 18 units of unmet demand) | LED String Lights: HOLD ₹450 (stock-capped, 44 units of unmet demand). ⚠️ Heads-up for Inventory AI: Festive Sweet Box 500g: HOLD price, stock covers only 4.8 days at current demand — needs transfer-in, not a discount; LED String Lights: HOLD price, stock covers only 2.5 days at current demand — needs transfer-in, not a discount.",
+        "why": "Festive Sweet Box 500g: festival in 3 days lifts expected demand; weekly price-change cap limits the move. Competitor at ₹320, margin at proposed price 32.5%. LED String Lights: we are priced below the competitor, leaving room to earn more per unit; festival in 3 days lifts expected demand; weekly price-change cap limits the move. Competitor at ₹480, margin at proposed price 35.4%.",
+        "proposals": [
+          {
+            "product_id": "P1",
+            "name": "Basmati Rice 5kg",
+            "action": "raise",
+            "current_price": 620,
+            "proposed_price": 681,
+            "price_change_pct": 9.8,
+            "competitor_price": 590,
+            "cost_price": 540,
+            "margin_pct_at_proposed": 20.7,
+            "forecast_weekly_units_current_price": 172.5,
+            "forecast_weekly_units_proposed_price": 89.8,
+            "sellable_units_current": 90,
+            "sellable_units_proposed": 89.8,
+            "expected_profit_current": 7200,
+            "expected_profit_proposed": 12661,
+            "profit_change": 5461,
+            "value_gain": 6264,
+            "stock_level": 90,
+            "days_of_cover_at_proposed": 7.0,
+            "stock_risk": "LOW",
+            "stock_constrained": false,
+            "demand_unmet_at_proposed": 0.0,
+            "unconstrained_best": {
+              "price": 602,
+              "profit_change_vs_holding": 5474
+            },
+            "reason_codes": [
+              "FESTIVAL_DEMAND_UPLIFT"
+            ]
+          },
+          {
+            "product_id": "P2",
+            "name": "Sunflower Oil 1L",
+            "action": "cut",
+            "current_price": 165,
+            "proposed_price": 158,
+            "price_change_pct": -4.2,
+            "competitor_price": 155,
+            "cost_price": 138,
+            "margin_pct_at_proposed": 12.7,
+            "forecast_weekly_units_current_price": 209.0,
+            "forecast_weekly_units_proposed_price": 263.1,
+            "sellable_units_current": 209.0,
+            "sellable_units_proposed": 263.1,
+            "expected_profit_current": 5643,
+            "expected_profit_proposed": 5261,
+            "profit_change": -382,
+            "value_gain": 680,
+            "stock_level": 400,
+            "days_of_cover_at_proposed": 10.6,
+            "stock_risk": "LOW",
+            "stock_constrained": false,
+            "demand_unmet_at_proposed": 0.0,
+            "unconstrained_best": {
+              "price": 158,
+              "profit_change_vs_holding": -382
+            },
+            "reason_codes": [
+              "COMPETITOR_UNDERCUTTING",
+              "FESTIVAL_DEMAND_UPLIFT"
+            ]
+          },
+          {
+            "product_id": "P3",
+            "name": "Festive Sweet Box 500g",
+            "action": "raise",
+            "current_price": 350,
+            "proposed_price": 385,
+            "price_change_pct": 10.0,
+            "competitor_price": 320,
+            "cost_price": 260,
+            "margin_pct_at_proposed": 32.5,
+            "forecast_weekly_units_current_price": 123.5,
+            "forecast_weekly_units_proposed_price": 57.9,
+            "sellable_units_current": 40,
+            "sellable_units_proposed": 40,
+            "expected_profit_current": 3600,
+            "expected_profit_proposed": 5000,
+            "profit_change": 1400,
+            "value_gain": 1610,
+            "stock_level": 40,
+            "days_of_cover_at_proposed": 4.8,
+            "stock_risk": "MEDIUM",
+            "stock_constrained": true,
+            "demand_unmet_at_proposed": 17.9,
+            "unconstrained_best": {
+              "price": 326,
+              "profit_change_vs_holding": 8637
+            },
+            "reason_codes": [
+              "FESTIVAL_DEMAND_UPLIFT",
+              "MAX_WEEKLY_CHANGE_CAP",
+              "STOCK_RISK_MEDIUM",
+              "STOCK_CONSTRAINED"
+            ]
+          },
+          {
+            "product_id": "P4",
+            "name": "LED String Lights",
+            "action": "raise",
+            "current_price": 450,
+            "proposed_price": 495,
+            "price_change_pct": 10.0,
+            "competitor_price": 480,
+            "cost_price": 320,
+            "margin_pct_at_proposed": 35.4,
+            "forecast_weekly_units_current_price": 91.0,
+            "forecast_weekly_units_proposed_price": 68.6,
+            "sellable_units_current": 25,
+            "sellable_units_proposed": 25,
+            "expected_profit_current": 3250,
+            "expected_profit_proposed": 4375,
+            "profit_change": 1125,
+            "value_gain": 1294,
+            "stock_level": 25,
+            "days_of_cover_at_proposed": 2.5,
+            "stock_risk": "HIGH",
+            "stock_constrained": true,
+            "demand_unmet_at_proposed": 43.6,
+            "unconstrained_best": {
+              "price": 452,
+              "profit_change_vs_holding": 8624
+            },
+            "reason_codes": [
+              "ROOM_BELOW_COMPETITOR",
+              "FESTIVAL_DEMAND_UPLIFT",
+              "MAX_WEEKLY_CHANGE_CAP",
+              "STOCK_RISK_HIGH",
+              "STOCK_CONSTRAINED"
+            ]
+          }
+        ],
+        "headline": [
+          {
+            "product_id": "P3",
+            "name": "Festive Sweet Box 500g",
+            "action": "raise",
+            "current_price": 350,
+            "proposed_price": 385,
+            "price_change_pct": 10.0,
+            "competitor_price": 320,
+            "cost_price": 260,
+            "margin_pct_at_proposed": 32.5,
+            "forecast_weekly_units_current_price": 123.5,
+            "forecast_weekly_units_proposed_price": 57.9,
+            "sellable_units_current": 40,
+            "sellable_units_proposed": 40,
+            "expected_profit_current": 3600,
+            "expected_profit_proposed": 5000,
+            "profit_change": 1400,
+            "value_gain": 1610,
+            "stock_level": 40,
+            "days_of_cover_at_proposed": 4.8,
+            "stock_risk": "MEDIUM",
+            "stock_constrained": true,
+            "demand_unmet_at_proposed": 17.9,
+            "unconstrained_best": {
+              "price": 326,
+              "profit_change_vs_holding": 8637
+            },
+            "reason_codes": [
+              "FESTIVAL_DEMAND_UPLIFT",
+              "MAX_WEEKLY_CHANGE_CAP",
+              "STOCK_RISK_MEDIUM",
+              "STOCK_CONSTRAINED"
+            ]
+          },
+          {
+            "product_id": "P4",
+            "name": "LED String Lights",
+            "action": "raise",
+            "current_price": 450,
+            "proposed_price": 495,
+            "price_change_pct": 10.0,
+            "competitor_price": 480,
+            "cost_price": 320,
+            "margin_pct_at_proposed": 35.4,
+            "forecast_weekly_units_current_price": 91.0,
+            "forecast_weekly_units_proposed_price": 68.6,
+            "sellable_units_current": 25,
+            "sellable_units_proposed": 25,
+            "expected_profit_current": 3250,
+            "expected_profit_proposed": 4375,
+            "profit_change": 1125,
+            "value_gain": 1294,
+            "stock_level": 25,
+            "days_of_cover_at_proposed": 2.5,
+            "stock_risk": "HIGH",
+            "stock_constrained": true,
+            "demand_unmet_at_proposed": 43.6,
+            "unconstrained_best": {
+              "price": 452,
+              "profit_change_vs_holding": 8624
+            },
+            "reason_codes": [
+              "ROOM_BELOW_COMPETITOR",
+              "FESTIVAL_DEMAND_UPLIFT",
+              "MAX_WEEKLY_CHANGE_CAP",
+              "STOCK_RISK_HIGH",
+              "STOCK_CONSTRAINED"
+            ]
+          }
+        ],
+        "source": "engine"
+      },
+      "inventory": {
+        "message": "S1 Coimbatore Central: Objection on Basmati Rice 5kg: only 4.2 days cover, 210 units of unmet demand. HOLD price, transfer in. | Objection on Sunflower Oil 1L: only 14.8 days cover, 12 units of unmet demand. HOLD price, transfer in. | Objection on Festive Sweet Box 500g: only 2.9 days cover, 150 units of unmet demand. HOLD price, transfer in. | Objection on LED String Lights: only 2.5 days cover, 115 units of unmet demand. HOLD price, transfer in.",
+        "why": "Checked 4 SKUs. 4 stockout risks, 0 overstock, 0 to monitor.",
+        "objections": [
+          {
+            "type": "STOCKOUT_RISK",
+            "sku_id": "P1",
+            "name": "Basmati Rice 5kg",
+            "days_cover": 4.2,
+            "unmet_units": 210
+          },
+          {
+            "type": "STOCKOUT_RISK",
+            "sku_id": "P2",
+            "name": "Sunflower Oil 1L",
+            "days_cover": 14.8,
+            "unmet_units": 12
+          },
+          {
+            "type": "STOCKOUT_RISK",
+            "sku_id": "P3",
+            "name": "Festive Sweet Box 500g",
+            "days_cover": 2.9,
+            "unmet_units": 150
+          },
+          {
+            "type": "STOCKOUT_RISK",
+            "sku_id": "P4",
+            "name": "LED String Lights",
+            "days_cover": 2.5,
+            "unmet_units": 115
+          }
+        ]
+      },
+      "logistics": [
+        "Fix available: transfer 82 units Basmati Rice 5kg Store S4 -> Store S1 within 2 days. Cost ₹830, saves ~₹5535 in waste at Store S4.",
+        "Fix available: transfer 18 units Festive Sweet Box 500g Store S3 -> Store S1 within 2 days. Cost ₹198, saves ~₹1584 in waste at Store S3.",
+        "Fix available: transfer 44 units LED String Lights Store S2 -> Store S1 tomorrow morning. Cost ₹214, saves ~₹4290 in waste at Store S2."
+      ],
+      "boss": {
+        "recommendation": "## 📊 FINAL RECOMMENDATION — Coimbatore Central (S1)\n\n### RECOMMENDATION\n- **Basmati Rice 5kg**: Increase price from ₹620 → ₹681 (+9.8%)\n- **Sunflower Oil 1L**: Reduce price from ₹165 → ₹158 (-4.2%)\n- **Festive Sweet Box 500g**: Increase price from ₹350 → ₹385 (+10.0%)\n- **LED String Lights**: Increase price from ₹450 → ₹495 (+10.0%)\n\n### WHY\n1. Basmati Rice 5kg: Festival Demand Uplift\n2. Sunflower Oil 1L: Competitor Undercutting\n3. Sunflower Oil 1L: Festival Demand Uplift\n4. Festive Sweet Box 500g: Festival Demand Uplift\n5. Festive Sweet Box 500g: Max Weekly Change Cap\n6. Festive Sweet Box 500g: Stock Risk Medium\n7. Festive Sweet Box 500g: Stock Constrained\n8. LED String Lights: Room Below Competitor\n9. LED String Lights: Festival Demand Uplift\n10. LED String Lights: Max Weekly Change Cap\n11. LED String Lights: Stock Risk High\n12. LED String Lights: Stock Constrained\n\n### DATA ANALYSIS\n### Coimbatore Central (S1)\n**Sales**\n- Basmati Rice 5kg: 120 -> 150 units (+25.0%) [significant]\n- Sunflower Oil 1L: 200 -> 190 units (-5.0%)\n- Festive Sweet Box 500g: 60 -> 95 units (+58.3%) [significant]\n- LED String Lights: 30 -> 70 units (+133.3%) [significant]\n**Stock**\n- Basmati Rice 5kg: 90 units, about 4.2 days of cover [low stock]\n- Sunflower Oil 1L: 400 units, about 14.7 days of cover\n- Festive Sweet Box 500g: 40 units, about 2.9 days of cover [low stock]\n- LED String Lights: 25 units, about 2.5 days of cover [low stock]\n**Competitor pricing**\n- Basmati Rice 5kg: ours INR 620 vs competitor INR 590 (+5.1%)\n- Sunflower Oil 1L: ours INR 165 vs competitor INR 155 (+6.5%)\n- Festive Sweet Box 500g: ours INR 350 vs competitor INR 320 (+9.4%)\n- LED String Lights: ours INR 450 vs competitor INR 480 (-6.2%)\n**Upcoming events**\n- Regional Harvest Festival in 3 days\n\n### PRICING DETAILS\n- **Basmati Rice 5kg**: ₹620 → ₹681 | Units: 172 → 90 | Profit Δ: +₹5,461 | Margin: 20.7% | Competitor: ₹590\n- **Sunflower Oil 1L**: ₹165 → ₹158 | Units: 209 → 263 | Profit Δ: ₹-382 | Margin: 12.7% | Competitor: ₹155\n- **Festive Sweet Box 500g**: ₹350 → ₹385 | Units: 124 → 58 | Profit Δ: +₹1,400 | Margin: 32.5% | Competitor: ₹320 ⚠️ Stock risk: MEDIUM 🚫 STOCK CONSTRAINED\n- **LED String Lights**: ₹450 → ₹495 | Units: 91 → 69 | Profit Δ: +₹1,125 | Margin: 35.4% | Competitor: ₹480 ⚠️ Stock risk: HIGH 🚫 STOCK CONSTRAINED\n\n### INVENTORY STATUS\n- ⚠️ **Basmati Rice 5kg**: STOCKOUT RISK — 4.2 days cover, 210 units unmet demand\n- ⚠️ **Sunflower Oil 1L**: STOCKOUT RISK — 14.8 days cover, 12 units unmet demand\n- ⚠️ **Festive Sweet Box 500g**: STOCKOUT RISK — 2.9 days cover, 150 units unmet demand\n- ⚠️ **LED String Lights**: STOCKOUT RISK — 2.5 days cover, 115 units unmet demand\n\n### LOGISTICS / TRANSFERS\n- Fix available: transfer 82 units Basmati Rice 5kg Store S4 -> Store S1 within 2 days. Cost ₹830, saves ~₹5535 in waste at Store S4.\n- Fix available: transfer 18 units Festive Sweet Box 500g Store S3 -> Store S1 within 2 days. Cost ₹198, saves ~₹1584 in waste at Store S3.\n- Fix available: transfer 44 units LED String Lights Store S2 -> Store S1 tomorrow morning. Cost ₹214, saves ~₹4290 in waste at Store S2.\n\n### RISKS\n- Festive Sweet Box 500g: Demand (58 units) exceeds stock (40 units)\n- Festive Sweet Box 500g: MEDIUM stock risk — only 4.8 days cover\n- LED String Lights: Demand (69 units) exceeds stock (25 units)\n- LED String Lights: HIGH stock risk — only 2.5 days cover\n- Festival (Regional Harvest Festival) in 3 days may cause demand surge beyond predictions\n\n### CONFIDENCE: 55%\n",
+        "source": "offline"
+      }
+    },
+    "S2": {
+      "store_id": "S2",
+      "store_name": "Tiruppur Mall",
+      "data_analyst": {
+        "summary": "### Tiruppur Mall (S2)\n**Sales**\n- Basmati Rice 5kg: 110 -> 85 units (-22.7%) [significant]\n- Sunflower Oil 1L: 150 -> 155 units (+3.3%)\n- Festive Sweet Box 500g: 40 -> 38 units (-5.0%)\n- LED String Lights: 20 -> 22 units (+10.0%)\n**Stock**\n- Basmati Rice 5kg: 300 units, about 24.7 days of cover\n- Sunflower Oil 1L: 220 units, about 9.9 days of cover\n- Festive Sweet Box 500g: 120 units, about 22.1 days of cover\n- LED String Lights: 60 units, about 19.1 days of cover\n**Competitor pricing**\n- Basmati Rice 5kg: ours INR 620 vs competitor INR 585 (+6.0%)\n- Sunflower Oil 1L: ours INR 165 vs competitor INR 165 (+0.0%)\n- Festive Sweet Box 500g: ours INR 350 vs competitor INR 340 (+2.9%)\n- LED String Lights: ours INR 450 vs competitor INR 470 (-4.3%)\n**Upcoming events**\n- No festival in the next 3 days",
+        "source": "offline"
+      },
+      "pricing": {
+        "message": "S2 Tiruppur Mall: I propose Basmati Rice 5kg ₹620 → ₹597 (-3.7%), units 85 → 106, profit -₹761 (margin traded for volume) | Sunflower Oil 1L ₹165 → ₹168 (+1.8%), units 155 → 150, profit +₹300.",
+        "why": "Basmati Rice 5kg: competitor is priced below us beyond the tolerated gap. Competitor at ₹585, margin at proposed price 9.5%. Sunflower Oil 1L: best score among allowed prices. Competitor at ₹165, margin at proposed price 17.9%.",
+        "proposals": [
+          {
+            "product_id": "P1",
+            "name": "Basmati Rice 5kg",
+            "action": "cut",
+            "current_price": 620,
+            "proposed_price": 597,
+            "price_change_pct": -3.7,
+            "competitor_price": 585,
+            "cost_price": 540,
+            "margin_pct_at_proposed": 9.5,
+            "forecast_weekly_units_current_price": 85.0,
+            "forecast_weekly_units_proposed_price": 105.9,
+            "sellable_units_current": 85.0,
+            "sellable_units_proposed": 105.9,
+            "expected_profit_current": 6800,
+            "expected_profit_proposed": 6039,
+            "profit_change": -761,
+            "value_gain": 820,
+            "stock_level": 300,
+            "days_of_cover_at_proposed": 19.8,
+            "stock_risk": "LOW",
+            "stock_constrained": false,
+            "demand_unmet_at_proposed": 0.0,
+            "unconstrained_best": {
+              "price": 597,
+              "profit_change_vs_holding": -761
+            },
+            "reason_codes": [
+              "COMPETITOR_UNDERCUTTING"
+            ]
+          },
+          {
+            "product_id": "P2",
+            "name": "Sunflower Oil 1L",
+            "action": "raise",
+            "current_price": 165,
+            "proposed_price": 168,
+            "price_change_pct": 1.8,
+            "competitor_price": 165,
+            "cost_price": 138,
+            "margin_pct_at_proposed": 17.9,
+            "forecast_weekly_units_current_price": 155.0,
+            "forecast_weekly_units_proposed_price": 149.5,
+            "sellable_units_current": 155.0,
+            "sellable_units_proposed": 149.5,
+            "expected_profit_current": 4185,
+            "expected_profit_proposed": 4485,
+            "profit_change": 300,
+            "value_gain": 232,
+            "stock_level": 220,
+            "days_of_cover_at_proposed": 10.3,
+            "stock_risk": "LOW",
+            "stock_constrained": false,
+            "demand_unmet_at_proposed": 0.0,
+            "unconstrained_best": {
+              "price": 168,
+              "profit_change_vs_holding": 300
+            },
+            "reason_codes": []
+          },
+          {
+            "product_id": "P3",
+            "name": "Festive Sweet Box 500g",
+            "action": "cut",
+            "current_price": 350,
+            "proposed_price": 347,
+            "price_change_pct": -0.9,
+            "competitor_price": 340,
+            "cost_price": 260,
+            "margin_pct_at_proposed": 25.1,
+            "forecast_weekly_units_current_price": 38.0,
+            "forecast_weekly_units_proposed_price": 39.8,
+            "sellable_units_current": 38.0,
+            "sellable_units_proposed": 39.8,
+            "expected_profit_current": 3420,
+            "expected_profit_proposed": 3461,
+            "profit_change": 41,
+            "value_gain": 117,
+            "stock_level": 120,
+            "days_of_cover_at_proposed": 21.1,
+            "stock_risk": "LOW",
+            "stock_constrained": false,
+            "demand_unmet_at_proposed": 0.0,
+            "unconstrained_best": {
+              "price": 347,
+              "profit_change_vs_holding": 41
+            },
+            "reason_codes": [
+              "COMPETITOR_UNDERCUTTING"
+            ]
+          },
+          {
+            "product_id": "P4",
+            "name": "LED String Lights",
+            "action": "raise",
+            "current_price": 450,
+            "proposed_price": 452,
+            "price_change_pct": 0.4,
+            "competitor_price": 470,
+            "cost_price": 320,
+            "margin_pct_at_proposed": 29.2,
+            "forecast_weekly_units_current_price": 22.0,
+            "forecast_weekly_units_proposed_price": 21.7,
+            "sellable_units_current": 22.0,
+            "sellable_units_proposed": 21.7,
+            "expected_profit_current": 2860,
+            "expected_profit_proposed": 2871,
+            "profit_change": 11,
+            "value_gain": 0,
+            "stock_level": 60,
+            "days_of_cover_at_proposed": 19.3,
+            "stock_risk": "LOW",
+            "stock_constrained": false,
+            "demand_unmet_at_proposed": 0.0,
+            "unconstrained_best": {
+              "price": 452,
+              "profit_change_vs_holding": 11
+            },
+            "reason_codes": [
+              "ROOM_BELOW_COMPETITOR"
+            ]
+          }
+        ],
+        "headline": [
+          {
+            "product_id": "P1",
+            "name": "Basmati Rice 5kg",
+            "action": "cut",
+            "current_price": 620,
+            "proposed_price": 597,
+            "price_change_pct": -3.7,
+            "competitor_price": 585,
+            "cost_price": 540,
+            "margin_pct_at_proposed": 9.5,
+            "forecast_weekly_units_current_price": 85.0,
+            "forecast_weekly_units_proposed_price": 105.9,
+            "sellable_units_current": 85.0,
+            "sellable_units_proposed": 105.9,
+            "expected_profit_current": 6800,
+            "expected_profit_proposed": 6039,
+            "profit_change": -761,
+            "value_gain": 820,
+            "stock_level": 300,
+            "days_of_cover_at_proposed": 19.8,
+            "stock_risk": "LOW",
+            "stock_constrained": false,
+            "demand_unmet_at_proposed": 0.0,
+            "unconstrained_best": {
+              "price": 597,
+              "profit_change_vs_holding": -761
+            },
+            "reason_codes": [
+              "COMPETITOR_UNDERCUTTING"
+            ]
+          },
+          {
+            "product_id": "P2",
+            "name": "Sunflower Oil 1L",
+            "action": "raise",
+            "current_price": 165,
+            "proposed_price": 168,
+            "price_change_pct": 1.8,
+            "competitor_price": 165,
+            "cost_price": 138,
+            "margin_pct_at_proposed": 17.9,
+            "forecast_weekly_units_current_price": 155.0,
+            "forecast_weekly_units_proposed_price": 149.5,
+            "sellable_units_current": 155.0,
+            "sellable_units_proposed": 149.5,
+            "expected_profit_current": 4185,
+            "expected_profit_proposed": 4485,
+            "profit_change": 300,
+            "value_gain": 232,
+            "stock_level": 220,
+            "days_of_cover_at_proposed": 10.3,
+            "stock_risk": "LOW",
+            "stock_constrained": false,
+            "demand_unmet_at_proposed": 0.0,
+            "unconstrained_best": {
+              "price": 168,
+              "profit_change_vs_holding": 300
+            },
+            "reason_codes": []
+          }
+        ],
+        "source": "engine"
+      },
+      "inventory": {
+        "message": "S2 Tiruppur Mall: Objection on Sunflower Oil 1L: only 10 days cover, 90 units of unmet demand. HOLD price, transfer in.",
+        "why": "Checked 4 SKUs. 1 stockout risks, 0 overstock, 0 to monitor.",
+        "objections": [
+          {
+            "type": "STOCKOUT_RISK",
+            "sku_id": "P2",
+            "name": "Sunflower Oil 1L",
+            "days_cover": 10,
+            "unmet_units": 90
+          }
+        ]
+      },
+      "logistics": [
+        "Fix available: transfer 44 units LED String Lights Store S2 -> Store S1 tomorrow morning. Cost ₹214, saves ~₹4290 in waste at Store S2."
+      ],
+      "boss": {
+        "recommendation": "## 📊 FINAL RECOMMENDATION — Tiruppur Mall (S2)\n\n### RECOMMENDATION\n- **Basmati Rice 5kg**: Reduce price from ₹620 → ₹597 (-3.7%)\n- **Sunflower Oil 1L**: Increase price from ₹165 → ₹168 (+1.8%)\n- **Festive Sweet Box 500g**: Reduce price from ₹350 → ₹347 (-0.9%)\n- **LED String Lights**: Increase price from ₹450 → ₹452 (+0.4%)\n\n### WHY\n1. Basmati Rice 5kg: Competitor Undercutting\n2. Festive Sweet Box 500g: Competitor Undercutting\n3. LED String Lights: Room Below Competitor\n\n### DATA ANALYSIS\n### Tiruppur Mall (S2)\n**Sales**\n- Basmati Rice 5kg: 110 -> 85 units (-22.7%) [significant]\n- Sunflower Oil 1L: 150 -> 155 units (+3.3%)\n- Festive Sweet Box 500g: 40 -> 38 units (-5.0%)\n- LED String Lights: 20 -> 22 units (+10.0%)\n**Stock**\n- Basmati Rice 5kg: 300 units, about 24.7 days of cover\n- Sunflower Oil 1L: 220 units, about 9.9 days of cover\n- Festive Sweet Box 500g: 120 units, about 22.1 days of cover\n- LED String Lights: 60 units, about 19.1 days of cover\n**Competitor pricing**\n- Basmati Rice 5kg: ours INR 620 vs competitor INR 585 (+6.0%)\n- Sunflower Oil 1L: ours INR 165 vs competitor INR 165 (+0.0%)\n- Festive Sweet Box 500g: ours INR 350 vs competitor INR 340 (+2.9%)\n- LED String Lights: ours INR 450 vs competitor INR 470 (-4.3%)\n**Upcoming events**\n- No festival in the next 3 days\n\n### PRICING DETAILS\n- **Basmati Rice 5kg**: ₹620 → ₹597 | Units: 85 → 106 | Profit Δ: ₹-761 | Margin: 9.5% | Competitor: ₹585\n- **Sunflower Oil 1L**: ₹165 → ₹168 | Units: 155 → 150 | Profit Δ: +₹300 | Margin: 17.9% | Competitor: ₹165\n- **Festive Sweet Box 500g**: ₹350 → ₹347 | Units: 38 → 40 | Profit Δ: +₹41 | Margin: 25.1% | Competitor: ₹340\n- **LED String Lights**: ₹450 → ₹452 | Units: 22 → 22 | Profit Δ: +₹11 | Margin: 29.2% | Competitor: ₹470\n\n### INVENTORY STATUS\n- ⚠️ **Sunflower Oil 1L**: STOCKOUT RISK — 10 days cover, 90 units unmet demand\n\n### LOGISTICS / TRANSFERS\n- Fix available: transfer 44 units LED String Lights Store S2 -> Store S1 tomorrow morning. Cost ₹214, saves ~₹4290 in waste at Store S2.\n\n### RISKS\n- Low risk scenario. Monitor competitor responses.\n\n### CONFIDENCE: 90%\n",
+        "source": "offline"
+      }
+    },
+    "S3": {
+      "store_id": "S3",
+      "store_name": "Salem Bazaar",
+      "data_analyst": {
+        "summary": "### Salem Bazaar (S3)\n**Sales**\n- Basmati Rice 5kg: 90 -> 92 units (+2.2%)\n- Sunflower Oil 1L: 130 -> 80 units (-38.5%) [significant]\n- Festive Sweet Box 500g: 50 -> 60 units (+20.0%) [significant]\n- LED String Lights: 45 -> 48 units (+6.7%)\n**Stock**\n- Basmati Rice 5kg: 35 units, about 2.7 days of cover [low stock]\n- Sunflower Oil 1L: 500 units, about 43.8 days of cover\n- Festive Sweet Box 500g: 15 units, about 1.8 days of cover [low stock]\n- LED String Lights: 200 units, about 29.2 days of cover\n**Competitor pricing**\n- Basmati Rice 5kg: ours INR 620 vs competitor INR 600 (+3.3%)\n- Sunflower Oil 1L: ours INR 165 vs competitor INR 140 (+17.9%)\n- Festive Sweet Box 500g: ours INR 350 vs competitor INR 330 (+6.1%)\n- LED String Lights: ours INR 450 vs competitor INR 455 (-1.1%)\n**Upcoming events**\n- Regional Harvest Festival in 3 days",
+        "source": "offline"
+      },
+      "pricing": {
+        "message": "S3 Salem Bazaar: I propose Basmati Rice 5kg: HOLD ₹620 (stock-capped, 21 units of unmet demand) | Festive Sweet Box 500g: HOLD ₹350 (stock-capped, 25 units of unmet demand). ⚠️ Heads-up for Inventory AI: Basmati Rice 5kg: HOLD price, stock covers only 4.3 days at current demand — needs transfer-in, not a discount; Festive Sweet Box 500g: HOLD price, stock covers only 2.6 days at current demand — needs transfer-in, not a discount.",
+        "why": "Basmati Rice 5kg: festival in 3 days lifts expected demand; weekly price-change cap limits the move. Competitor at ₹600, margin at proposed price 20.8%. Festive Sweet Box 500g: festival in 3 days lifts expected demand; weekly price-change cap limits the move. Competitor at ₹330, margin at proposed price 32.5%.",
+        "proposals": [
+          {
+            "product_id": "P1",
+            "name": "Basmati Rice 5kg",
+            "action": "raise",
+            "current_price": 620,
+            "proposed_price": 682,
+            "price_change_pct": 10.0,
+            "competitor_price": 600,
+            "cost_price": 540,
+            "margin_pct_at_proposed": 20.8,
+            "forecast_weekly_units_current_price": 105.8,
+            "forecast_weekly_units_proposed_price": 56.4,
+            "sellable_units_current": 35,
+            "sellable_units_proposed": 35,
+            "expected_profit_current": 2800,
+            "expected_profit_proposed": 4970,
+            "profit_change": 2170,
+            "value_gain": 2496,
+            "stock_level": 35,
+            "days_of_cover_at_proposed": 4.3,
+            "stock_risk": "MEDIUM",
+            "stock_constrained": true,
+            "demand_unmet_at_proposed": 21.4,
+            "unconstrained_best": {
+              "price": 612,
+              "profit_change_vs_holding": 5397
+            },
+            "reason_codes": [
+              "FESTIVAL_DEMAND_UPLIFT",
+              "MAX_WEEKLY_CHANGE_CAP",
+              "STOCK_RISK_MEDIUM",
+              "STOCK_CONSTRAINED"
+            ]
+          },
+          {
+            "product_id": "P2",
+            "name": "Sunflower Oil 1L",
+            "action": "cut",
+            "current_price": 165,
+            "proposed_price": 149,
+            "price_change_pct": -9.7,
+            "competitor_price": 140,
+            "cost_price": 138,
+            "margin_pct_at_proposed": 7.4,
+            "forecast_weekly_units_current_price": 88.0,
+            "forecast_weekly_units_proposed_price": 178.5,
+            "sellable_units_current": 88.0,
+            "sellable_units_proposed": 178.5,
+            "expected_profit_current": 2376,
+            "expected_profit_proposed": 1963,
+            "profit_change": -413,
+            "value_gain": 1398,
+            "stock_level": 500,
+            "days_of_cover_at_proposed": 19.6,
+            "stock_risk": "LOW",
+            "stock_constrained": false,
+            "demand_unmet_at_proposed": 0.0,
+            "unconstrained_best": {
+              "price": 149,
+              "profit_change_vs_holding": -413
+            },
+            "reason_codes": [
+              "COMPETITOR_UNDERCUTTING",
+              "FESTIVAL_DEMAND_UPLIFT"
+            ]
+          },
+          {
+            "product_id": "P3",
+            "name": "Festive Sweet Box 500g",
+            "action": "raise",
+            "current_price": 350,
+            "proposed_price": 385,
+            "price_change_pct": 10.0,
+            "competitor_price": 330,
+            "cost_price": 260,
+            "margin_pct_at_proposed": 32.5,
+            "forecast_weekly_units_current_price": 78.0,
+            "forecast_weekly_units_proposed_price": 40.3,
+            "sellable_units_current": 15,
+            "sellable_units_proposed": 15,
+            "expected_profit_current": 1350,
+            "expected_profit_proposed": 1875,
+            "profit_change": 525,
+            "value_gain": 604,
+            "stock_level": 15,
+            "days_of_cover_at_proposed": 2.6,
+            "stock_risk": "HIGH",
+            "stock_constrained": true,
+            "demand_unmet_at_proposed": 25.3,
+            "unconstrained_best": {
+              "price": 336,
+              "profit_change_vs_holding": 6035
+            },
+            "reason_codes": [
+              "FESTIVAL_DEMAND_UPLIFT",
+              "MAX_WEEKLY_CHANGE_CAP",
+              "STOCK_RISK_HIGH",
+              "STOCK_CONSTRAINED"
+            ]
+          },
+          {
+            "product_id": "P4",
+            "name": "LED String Lights",
+            "action": "raise",
+            "current_price": 450,
+            "proposed_price": 452,
+            "price_change_pct": 0.4,
+            "competitor_price": 455,
+            "cost_price": 320,
+            "margin_pct_at_proposed": 29.2,
+            "forecast_weekly_units_current_price": 62.4,
+            "forecast_weekly_units_proposed_price": 61.7,
+            "sellable_units_current": 62.4,
+            "sellable_units_proposed": 61.7,
+            "expected_profit_current": 8112,
+            "expected_profit_proposed": 8142,
+            "profit_change": 30,
+            "value_gain": 1,
+            "stock_level": 200,
+            "days_of_cover_at_proposed": 22.7,
+            "stock_risk": "LOW",
+            "stock_constrained": false,
+            "demand_unmet_at_proposed": 0.0,
+            "unconstrained_best": {
+              "price": 452,
+              "profit_change_vs_holding": 30
+            },
+            "reason_codes": [
+              "ROOM_BELOW_COMPETITOR",
+              "FESTIVAL_DEMAND_UPLIFT"
+            ]
+          }
+        ],
+        "headline": [
+          {
+            "product_id": "P1",
+            "name": "Basmati Rice 5kg",
+            "action": "raise",
+            "current_price": 620,
+            "proposed_price": 682,
+            "price_change_pct": 10.0,
+            "competitor_price": 600,
+            "cost_price": 540,
+            "margin_pct_at_proposed": 20.8,
+            "forecast_weekly_units_current_price": 105.8,
+            "forecast_weekly_units_proposed_price": 56.4,
+            "sellable_units_current": 35,
+            "sellable_units_proposed": 35,
+            "expected_profit_current": 2800,
+            "expected_profit_proposed": 4970,
+            "profit_change": 2170,
+            "value_gain": 2496,
+            "stock_level": 35,
+            "days_of_cover_at_proposed": 4.3,
+            "stock_risk": "MEDIUM",
+            "stock_constrained": true,
+            "demand_unmet_at_proposed": 21.4,
+            "unconstrained_best": {
+              "price": 612,
+              "profit_change_vs_holding": 5397
+            },
+            "reason_codes": [
+              "FESTIVAL_DEMAND_UPLIFT",
+              "MAX_WEEKLY_CHANGE_CAP",
+              "STOCK_RISK_MEDIUM",
+              "STOCK_CONSTRAINED"
+            ]
+          },
+          {
+            "product_id": "P3",
+            "name": "Festive Sweet Box 500g",
+            "action": "raise",
+            "current_price": 350,
+            "proposed_price": 385,
+            "price_change_pct": 10.0,
+            "competitor_price": 330,
+            "cost_price": 260,
+            "margin_pct_at_proposed": 32.5,
+            "forecast_weekly_units_current_price": 78.0,
+            "forecast_weekly_units_proposed_price": 40.3,
+            "sellable_units_current": 15,
+            "sellable_units_proposed": 15,
+            "expected_profit_current": 1350,
+            "expected_profit_proposed": 1875,
+            "profit_change": 525,
+            "value_gain": 604,
+            "stock_level": 15,
+            "days_of_cover_at_proposed": 2.6,
+            "stock_risk": "HIGH",
+            "stock_constrained": true,
+            "demand_unmet_at_proposed": 25.3,
+            "unconstrained_best": {
+              "price": 336,
+              "profit_change_vs_holding": 6035
+            },
+            "reason_codes": [
+              "FESTIVAL_DEMAND_UPLIFT",
+              "MAX_WEEKLY_CHANGE_CAP",
+              "STOCK_RISK_HIGH",
+              "STOCK_CONSTRAINED"
+            ]
+          }
+        ],
+        "source": "engine"
+      },
+      "inventory": {
+        "message": "S3 Salem Bazaar: Objection on Basmati Rice 5kg: only 2.7 days cover, 149 units of unmet demand. HOLD price, transfer in. | Objection on Festive Sweet Box 500g: only 1.7 days cover, 105 units of unmet demand. HOLD price, transfer in.",
+        "why": "Checked 4 SKUs. 2 stockout risks, 0 overstock, 0 to monitor.",
+        "objections": [
+          {
+            "type": "STOCKOUT_RISK",
+            "sku_id": "P1",
+            "name": "Basmati Rice 5kg",
+            "days_cover": 2.7,
+            "unmet_units": 149
+          },
+          {
+            "type": "STOCKOUT_RISK",
+            "sku_id": "P3",
+            "name": "Festive Sweet Box 500g",
+            "days_cover": 1.7,
+            "unmet_units": 105
+          }
+        ]
+      },
+      "logistics": [
+        "Fix available: transfer 18 units Festive Sweet Box 500g Store S3 -> Store S1 within 2 days. Cost ₹198, saves ~₹1584 in waste at Store S3."
+      ],
+      "boss": {
+        "recommendation": "## 📊 FINAL RECOMMENDATION — Salem Bazaar (S3)\n\n### RECOMMENDATION\n- **Basmati Rice 5kg**: Increase price from ₹620 → ₹682 (+10.0%)\n- **Sunflower Oil 1L**: Reduce price from ₹165 → ₹149 (-9.7%)\n- **Festive Sweet Box 500g**: Increase price from ₹350 → ₹385 (+10.0%)\n- **LED String Lights**: Increase price from ₹450 → ₹452 (+0.4%)\n\n### WHY\n1. Basmati Rice 5kg: Festival Demand Uplift\n2. Basmati Rice 5kg: Max Weekly Change Cap\n3. Basmati Rice 5kg: Stock Risk Medium\n4. Basmati Rice 5kg: Stock Constrained\n5. Sunflower Oil 1L: Competitor Undercutting\n6. Sunflower Oil 1L: Festival Demand Uplift\n7. Festive Sweet Box 500g: Festival Demand Uplift\n8. Festive Sweet Box 500g: Max Weekly Change Cap\n9. Festive Sweet Box 500g: Stock Risk High\n10. Festive Sweet Box 500g: Stock Constrained\n11. LED String Lights: Room Below Competitor\n12. LED String Lights: Festival Demand Uplift\n\n### DATA ANALYSIS\n### Salem Bazaar (S3)\n**Sales**\n- Basmati Rice 5kg: 90 -> 92 units (+2.2%)\n- Sunflower Oil 1L: 130 -> 80 units (-38.5%) [significant]\n- Festive Sweet Box 500g: 50 -> 60 units (+20.0%) [significant]\n- LED String Lights: 45 -> 48 units (+6.7%)\n**Stock**\n- Basmati Rice 5kg: 35 units, about 2.7 days of cover [low stock]\n- Sunflower Oil 1L: 500 units, about 43.8 days of cover\n- Festive Sweet Box 500g: 15 units, about 1.8 days of cover [low stock]\n- LED String Lights: 200 units, about 29.2 days of cover\n**Competitor pricing**\n- Basmati Rice 5kg: ours INR 620 vs competitor INR 600 (+3.3%)\n- Sunflower Oil 1L: ours INR 165 vs competitor INR 140 (+17.9%)\n- Festive Sweet Box 500g: ours INR 350 vs competitor INR 330 (+6.1%)\n- LED String Lights: ours INR 450 vs competitor INR 455 (-1.1%)\n**Upcoming events**\n- Regional Harvest Festival in 3 days\n\n### PRICING DETAILS\n- **Basmati Rice 5kg**: ₹620 → ₹682 | Units: 106 → 56 | Profit Δ: +₹2,170 | Margin: 20.8% | Competitor: ₹600 ⚠️ Stock risk: MEDIUM 🚫 STOCK CONSTRAINED\n- **Sunflower Oil 1L**: ₹165 → ₹149 | Units: 88 → 178 | Profit Δ: ₹-413 | Margin: 7.4% | Competitor: ₹140\n- **Festive Sweet Box 500g**: ₹350 → ₹385 | Units: 78 → 40 | Profit Δ: +₹525 | Margin: 32.5% | Competitor: ₹330 ⚠️ Stock risk: HIGH 🚫 STOCK CONSTRAINED\n- **LED String Lights**: ₹450 → ₹452 | Units: 62 → 62 | Profit Δ: +₹30 | Margin: 29.2% | Competitor: ₹455\n\n### INVENTORY STATUS\n- ⚠️ **Basmati Rice 5kg**: STOCKOUT RISK — 2.7 days cover, 149 units unmet demand\n- ⚠️ **Festive Sweet Box 500g**: STOCKOUT RISK — 1.7 days cover, 105 units unmet demand\n\n### LOGISTICS / TRANSFERS\n- Fix available: transfer 18 units Festive Sweet Box 500g Store S3 -> Store S1 within 2 days. Cost ₹198, saves ~₹1584 in waste at Store S3.\n\n### RISKS\n- Basmati Rice 5kg: Demand (56 units) exceeds stock (35 units)\n- Basmati Rice 5kg: MEDIUM stock risk — only 4.3 days cover\n- Festive Sweet Box 500g: Demand (40 units) exceeds stock (15 units)\n- Festive Sweet Box 500g: HIGH stock risk — only 2.6 days cover\n- Festival (Regional Harvest Festival) in 3 days may cause demand surge beyond predictions\n\n### CONFIDENCE: 55%\n",
+        "source": "offline"
+      }
+    }
+  },
+  "logistics_global": [
+    "Fix available: transfer 82 units Basmati Rice 5kg Store S4 -> Store S1 within 2 days. Cost ₹830, saves ~₹5535 in waste at Store S4.",
+    "Fix available: transfer 18 units Festive Sweet Box 500g Store S3 -> Store S1 within 2 days. Cost ₹198, saves ~₹1584 in waste at Store S3.",
+    "Fix available: transfer 44 units LED String Lights Store S2 -> Store S1 tomorrow morning. Cost ₹214, saves ~₹4290 in waste at Store S2."
+  ]
+}

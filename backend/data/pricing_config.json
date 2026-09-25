@@ -1,0 +1,15 @@
+{
+  "global": {
+    "max_weekly_change_pct": 10,
+    "min_margin_pct": 5,
+    "competitor_tolerance_pct": 2,
+    "competitor_sensitivity": 3.0,
+    "volume_weight": 0.15
+  },
+  "products": {
+    "P1": {"cost_price": 540, "elasticity": -2.5, "festival_uplift": 1.15},
+    "P2": {"cost_price": 138, "elasticity": -2.0, "festival_uplift": 1.10},
+    "P3": {"cost_price": 260, "elasticity": -2.2, "festival_uplift": 1.30},
+    "P4": {"cost_price": 320, "elasticity": -2.6, "festival_uplift": 1.30}
+  }
+}

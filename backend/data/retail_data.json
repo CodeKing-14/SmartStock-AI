@@ -1,0 +1,43 @@
+{
+  "chain_name": "FreshMart Retail",
+  "currency": "INR",
+  "week_label": "Week 39 vs Week 38",
+  "stores": [
+    {
+      "store_id": "S1",
+      "store_name": "Coimbatore Central",
+      "festival_in_3_days": true,
+      "festival_name": "Regional Harvest Festival",
+      "products": [
+        {"product_id": "P1", "name": "Basmati Rice 5kg", "our_price": 620, "sales_last_week": 120, "sales_this_week": 150, "stock_level": 90, "competitor_price": 590},
+        {"product_id": "P2", "name": "Sunflower Oil 1L", "our_price": 165, "sales_last_week": 200, "sales_this_week": 190, "stock_level": 400, "competitor_price": 155},
+        {"product_id": "P3", "name": "Festive Sweet Box 500g", "our_price": 350, "sales_last_week": 60, "sales_this_week": 95, "stock_level": 40, "competitor_price": 320},
+        {"product_id": "P4", "name": "LED String Lights", "our_price": 450, "sales_last_week": 30, "sales_this_week": 70, "stock_level": 25, "competitor_price": 480}
+      ]
+    },
+    {
+      "store_id": "S2",
+      "store_name": "Tiruppur Mall",
+      "festival_in_3_days": false,
+      "festival_name": null,
+      "products": [
+        {"product_id": "P1", "name": "Basmati Rice 5kg", "our_price": 620, "sales_last_week": 110, "sales_this_week": 85, "stock_level": 300, "competitor_price": 585},
+        {"product_id": "P2", "name": "Sunflower Oil 1L", "our_price": 165, "sales_last_week": 150, "sales_this_week": 155, "stock_level": 220, "competitor_price": 165},
+        {"product_id": "P3", "name": "Festive Sweet Box 500g", "our_price": 350, "sales_last_week": 40, "sales_this_week": 38, "stock_level": 120, "competitor_price": 340},
+        {"product_id": "P4", "name": "LED String Lights", "our_price": 450, "sales_last_week": 20, "sales_this_week": 22, "stock_level": 60, "competitor_price": 470}
+      ]
+    },
+    {
+      "store_id": "S3",
+      "store_name": "Salem Bazaar",
+      "festival_in_3_days": true,
+      "festival_name": "Regional Harvest Festival",
+      "products": [
+        {"product_id": "P1", "name": "Basmati Rice 5kg", "our_price": 620, "sales_last_week": 90, "sales_this_week": 92, "stock_level": 35, "competitor_price": 600},
+        {"product_id": "P2", "name": "Sunflower Oil 1L", "our_price": 165, "sales_last_week": 130, "sales_this_week": 80, "stock_level": 500, "competitor_price": 140},
+        {"product_id": "P3", "name": "Festive Sweet Box 500g", "our_price": 350, "sales_last_week": 50, "sales_this_week": 60, "stock_level": 15, "competitor_price": 330},
+        {"product_id": "P4", "name": "LED String Lights", "our_price": 450, "sales_last_week": 45, "sales_this_week": 48, "stock_level": 200, "competitor_price": 455}
+      ]
+    }
+  ]
+}

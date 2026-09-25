@@ -1,0 +1,41 @@
+{
+  "stores": [
+    {"store_id": "S1", "name": "Coimbatore Central", "lat": 11.0168, "lon": 76.9558},
+    {"store_id": "S2", "name": "Tiruppur Mall",      "lat": 11.1085, "lon": 77.3411},
+    {"store_id": "S3", "name": "Erode Junction",     "lat": 11.3410, "lon": 77.7172},
+    {"store_id": "S4", "name": "Salem Highway",      "lat": 11.6643, "lon": 78.1460}
+  ],
+
+  "_comment_positions": "Each row is one SKU's stock position at one store. type=DEFICIT rows come from Inventory AI's STOCKOUT_RISK objections (unmet_units = shortfall). type=SURPLUS rows come from Inventory AI's OVERSTOCK objections (surplus_units = units above safe cover, at risk of markdown/spoilage). unit_weight_kg and unit_cost_inr drive transport cost and waste-value math; spoilage_risk_pct is the probability the surplus goes unsold/unsellable if NOT moved.",
+
+  "sku_positions": [
+    {"sku_id": "SKU001", "name": "Basmati Rice 5kg", "store_id": "S1", "type": "DEFICIT",
+     "units": 82, "unit_cost_inr": 450, "unit_weight_kg": 5.0, "spoilage_risk_pct": 0.10},
+    {"sku_id": "SKU001", "name": "Basmati Rice 5kg", "store_id": "S4", "type": "SURPLUS",
+     "units": 150, "unit_cost_inr": 450, "unit_weight_kg": 5.0, "spoilage_risk_pct": 0.15},
+
+    {"sku_id": "SKU002", "name": "Festive Sweet Box 500g", "store_id": "S1", "type": "DEFICIT",
+     "units": 18, "unit_cost_inr": 110, "unit_weight_kg": 0.5, "spoilage_risk_pct": 0.80},
+    {"sku_id": "SKU002", "name": "Festive Sweet Box 500g", "store_id": "S3", "type": "SURPLUS",
+     "units": 90, "unit_cost_inr": 110, "unit_weight_kg": 0.5, "spoilage_risk_pct": 0.80},
+
+    {"sku_id": "SKU003", "name": "LED String Lights", "store_id": "S1", "type": "DEFICIT",
+     "units": 44, "unit_cost_inr": 150, "unit_weight_kg": 0.3, "spoilage_risk_pct": 0.65},
+    {"sku_id": "SKU003", "name": "LED String Lights", "store_id": "S2", "type": "SURPLUS",
+     "units": 60, "unit_cost_inr": 150, "unit_weight_kg": 0.3, "spoilage_risk_pct": 0.65}
+  ],
+
+  "transport_cost_model": {
+    "base_handling_fee_inr": 100,
+    "per_unit_per_km_inr": 0.06,
+    "_comment": "cost = base_handling_fee + units * distance_km * per_unit_per_km. Placeholder linear model — swap for your real logistics/fleet cost API if you have one."
+  },
+
+  "eta_rules_km": [
+    {"max_km": 80,  "eta": "tomorrow morning"},
+    {"max_km": 150, "eta": "within 2 days"},
+    {"max_km": 999999, "eta": "within 3 days"}
+  ],
+
+  "min_net_benefit_ratio": 1.3
+}
