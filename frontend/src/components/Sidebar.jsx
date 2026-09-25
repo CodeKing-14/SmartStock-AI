@@ -11,7 +11,19 @@ import {
   ArrowRight
 } from 'lucide-react';
 
-export default function Sidebar({ activePage, setActivePage }) {
+export default function Sidebar({ activePage, setActivePage, analysisData }) {
+  const storeCount = Object.keys(analysisData?.stores || {}).length;
+  const transfersCount = (analysisData?.logistics_global?.transfers || analysisData?.logistics?.transfers || []).length;
+  
+  let priceChanges = 0;
+  let riskFlags = 0;
+  if (analysisData?.stores) {
+    Object.values(analysisData.stores).forEach(s => {
+      Object.values(s.pricing || {}).forEach(p => { if (p.action !== 'hold') priceChanges++; });
+      Object.values(s.inventory || {}).forEach(inv => { if (inv.flag) riskFlags++; });
+    });
+  }
+
   const pages = [
     {
       id: 'boss-ai',
@@ -25,36 +37,36 @@ export default function Sidebar({ activePage, setActivePage }) {
     {
       id: 'data-ai',
       label: '1. Data Analyst AI',
-      sub: 'Demand Spike (+160%)',
+      sub: 'Demand & Trend Analytics',
       icon: BarChart3,
-      badge: '+160%',
+      badge: storeCount > 0 ? `${storeCount} Stores` : '+160%',
       badgeClass: 'count',
       color: '#2563eb'
     },
     {
       id: 'pricing-ai',
       label: '2. Pricing AI',
-      sub: 'Margin & $120 Price Lock',
+      sub: 'Elasticity & Margin Models',
       icon: Tag,
-      badge: '$120 Lock',
+      badge: priceChanges > 0 ? `${priceChanges} Adjusted` : 'Optimal',
       badgeClass: 'count',
       color: '#059669'
     },
     {
       id: 'inventory-ai',
       label: '3. Inventory AI',
-      sub: 'Warehouse Stock Balance',
+      sub: 'Stock & Validation Agents',
       icon: Boxes,
-      badge: 'A:500 vs B:20',
-      badgeClass: 'count',
+      badge: riskFlags > 0 ? `${riskFlags} Risks` : 'Safe',
+      badgeClass: riskFlags > 0 ? 'live' : 'count',
       color: '#d97706'
     },
     {
       id: 'logistics-ai',
       label: '4. Logistics AI',
-      sub: 'Van #4 Fleet & Route',
+      sub: 'Multi-Store Balancing',
       icon: Truck,
-      badge: '$75 Cost',
+      badge: transfersCount > 0 ? `${transfersCount} Transfers` : 'Balanced',
       badgeClass: 'count',
       color: '#7c3aed'
     },

@@ -104,11 +104,11 @@ def run_pipeline(retail_data: dict,
                  use_llm: bool = False) -> dict:
                  
     if pricing_config is None:
-        with open(DATA_DIR / "pricing_config.json", "r", encoding="utf-8") as f:
+        with open(DATA_DIR / "pricing_config.json", "r", encoding="utf-8", errors="replace") as f:
             pricing_config = json.load(f)
 
     if logistics_data is None:
-        with open(DATA_DIR / "logistics_data.json", "r", encoding="utf-8") as f:
+        with open(DATA_DIR / "logistics_data.json", "r", encoding="utf-8", errors="replace") as f:
             logistics_data = json.load(f)
 
     meta = {k: v for k, v in retail_data.items() if k != "stores"}
@@ -244,6 +244,7 @@ def run_pipeline(retail_data: dict,
         "stores": all_results,
         "logistics_global": logistics_output,
         "report_md": report_md,
+        "report_markdown": report_md,
         "files": {
             "markdown": str(result_path),
             "json": str(json_path),

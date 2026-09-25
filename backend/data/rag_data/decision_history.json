@@ -1,0 +1,225 @@
+{
+  "decisions": [
+    {
+      "id": "D001",
+      "date": "2025-10-14",
+      "situation": "Sales down 12%, competitor cut price 8%, inventory high at 50 days supply, festival starting in 7 days",
+      "decision": "Cut price 3%, bundle with complementary low-cost item, hold remaining stock for festival demand",
+      "rationale": "Festival demand typically lifts volume 40%. A small cut now signals value without giving away the festival premium.",
+      "result": "success",
+      "outcome_profit_inr": 13500,
+      "outcome_volume_change_pct": 18,
+      "weeks_tracked": 4
+    },
+    {
+      "id": "D002",
+      "date": "2025-08-02",
+      "situation": "Sales down 20%, competitor cut price 15%, overstock at 70 days supply, no upcoming events",
+      "decision": "Cut price 5%, launch clearance bundle, push through secondary channel",
+      "rationale": "Deep overstock with no seasonal catalyst ahead means the cost of holding inventory exceeds the margin lost to a cut.",
+      "result": "success",
+      "outcome_profit_inr": 10500,
+      "outcome_volume_change_pct": 35,
+      "weeks_tracked": 3
+    },
+    {
+      "id": "D003",
+      "date": "2025-11-20",
+      "situation": "Sales stable, competitor cut price 10%, inventory low at 5 days supply",
+      "decision": "Hold price, do not respond to competitor cut",
+      "rationale": "Low stock means pricing power. Matching the cut would sell out faster without any margin benefit.",
+      "result": "success",
+      "outcome_profit_inr": 15000,
+      "outcome_volume_change_pct": -8,
+      "weeks_tracked": 6
+    },
+    {
+      "id": "D004",
+      "date": "2025-10-21",
+      "situation": "Festival week, high demand, inventory low at 6 days supply",
+      "decision": "Raise price 3%, ration remaining stock across stores",
+      "rationale": "Demand is inelastic during festival peak; a modest raise captures margin customers are willing to pay.",
+      "result": "success",
+      "outcome_profit_inr": 18500,
+      "outcome_volume_change_pct": -5,
+      "weeks_tracked": 2
+    },
+    {
+      "id": "D005",
+      "date": "2025-06-05",
+      "situation": "New product launch, competitor already established with aggressive pricing, inventory normal",
+      "decision": "Price 8% below long-run target margin for first month, invest in visibility",
+      "rationale": "Launch phase needs volume and reviews more than margin; accept a thinner margin temporarily.",
+      "result": "success",
+      "outcome_profit_inr": 8000,
+      "outcome_volume_change_pct": 65,
+      "weeks_tracked": 4
+    },
+    {
+      "id": "D006",
+      "date": "2025-07-11",
+      "situation": "Sales down 8%, competitor stable, inventory normal at 20 days supply, no events",
+      "decision": "Hold price, investigate demand drop before acting",
+      "rationale": "No competitive or inventory pressure to justify a price move; likely a demand-side issue not solved by pricing.",
+      "result": "success",
+      "outcome_profit_inr": 12000,
+      "outcome_volume_change_pct": 2,
+      "weeks_tracked": 3
+    },
+    {
+      "id": "D007",
+      "date": "2025-09-02",
+      "situation": "Overstock at 60 days supply, no competitor movement, no events, premium-tier SKU",
+      "decision": "Bundle with accessory item instead of discounting, protect list price",
+      "rationale": "Premium SKUs cannot be discounted per policy; bundling clears stock while protecting brand price anchor.",
+      "result": "success",
+      "outcome_profit_inr": 9200,
+      "outcome_volume_change_pct": 22,
+      "weeks_tracked": 5
+    },
+    {
+      "id": "D008",
+      "date": "2025-12-15",
+      "situation": "Sales down 15%, two competitors both cut price 10-12%, inventory high at 48 days supply, festival in 3 weeks",
+      "decision": "Hold price for now, prepare bundle offer to launch closer to festival",
+      "rationale": "Festival is close enough that demand will recover; better to wait than cut into a period where cuts are policy-restricted anyway.",
+      "result": "success",
+      "outcome_profit_inr": 14200,
+      "outcome_volume_change_pct": 5,
+      "weeks_tracked": 3
+    },
+    {
+      "id": "D009",
+      "date": "2025-05-19",
+      "situation": "Sales down 25%, competitor cut price 20%, overstock severe at 90 days supply, no events",
+      "decision": "Cut price 8% (maximum allowed), run clearance campaign, escalate to human approval",
+      "rationale": "Severe overstock with a large competitor gap justifies the maximum allowed cut; impact size triggers required approval.",
+      "result": "success",
+      "outcome_profit_inr": 6000,
+      "outcome_volume_change_pct": 55,
+      "weeks_tracked": 2
+    },
+    {
+      "id": "D010",
+      "date": "2025-08-28",
+      "situation": "Inventory low at 4 days supply, lead time 10 days, no competitor movement",
+      "decision": "Trigger emergency reorder, hold price, ration stock to top customers",
+      "rationale": "Stockout risk is a supply problem, not a pricing problem; raising price would only add reputational risk on top of a supply gap.",
+      "result": "success",
+      "outcome_profit_inr": 11000,
+      "outcome_volume_change_pct": -12,
+      "weeks_tracked": 2
+    },
+    {
+      "id": "D011",
+      "date": "2025-11-03",
+      "situation": "Store A has overstock at 55 days supply, Store B nearby has stockout risk at 5 days supply, same SKU",
+      "decision": "Transfer 40% of Store A's surplus stock to Store B instead of discounting at Store A",
+      "rationale": "Transfer ROI calculated at 34%, well above the 20% threshold; solves both stores' problems without touching price.",
+      "result": "success",
+      "outcome_profit_inr": 7800,
+      "outcome_volume_change_pct": 0,
+      "weeks_tracked": 1
+    },
+    {
+      "id": "D012",
+      "date": "2025-06-30",
+      "situation": "Sales up 10%, competitor raised price 5%, inventory normal, no events",
+      "decision": "Hold price rather than following competitor's increase immediately",
+      "rationale": "No urgency to match an increase; waiting preserves relative value perception while sales are already strong.",
+      "result": "success",
+      "outcome_profit_inr": 16500,
+      "outcome_volume_change_pct": 3,
+      "weeks_tracked": 4
+    },
+    {
+      "id": "D013",
+      "date": "2025-09-17",
+      "situation": "Sales down 10%, competitor cut price 6%, inventory high at 46 days supply, no events, mid-tier SKU",
+      "decision": "Cut price 3%, monitor for one week before further action",
+      "rationale": "Small, policy-compliant cut tests demand elasticity without overcommitting to a larger move.",
+      "result": "mixed",
+      "outcome_profit_inr": 5200,
+      "outcome_volume_change_pct": 9,
+      "weeks_tracked": 2
+    },
+    {
+      "id": "D014",
+      "date": "2025-07-25",
+      "situation": "Inventory overstock at 65 days supply, competitor stable, brand-sensitive premium SKU, no events",
+      "decision": "Cut price 6% directly instead of bundling",
+      "rationale": "Bundling partner unavailable; direct cut was within the 5% premium-SKU exception granted for clearance.",
+      "result": "failure",
+      "outcome_profit_inr": -1800,
+      "outcome_volume_change_pct": 14,
+      "weeks_tracked": 3,
+      "lesson_learned": "Cutting a premium SKU beyond the 5% cap damaged margin more than the volume gain offset; policy exception should not have been granted here"
+    },
+    {
+      "id": "D015",
+      "date": "2025-04-08",
+      "situation": "Two nearby stores both have moderate overstock at 40-45 days supply, no stockout anywhere in network",
+      "decision": "Hold at both stores, do not transfer, wait for natural sell-through",
+      "rationale": "No store has a stockout to justify transfer cost; both are within acceptable overstock range, not severe.",
+      "result": "success",
+      "outcome_profit_inr": 9000,
+      "outcome_volume_change_pct": 4,
+      "weeks_tracked": 5
+    },
+    {
+      "id": "D016",
+      "date": "2025-10-01",
+      "situation": "Sales down 18%, competitor cut price 12%, inventory high 52 days supply, festival in 10 days, mid-tier SKU",
+      "decision": "Hold price until 3 days before festival, then run limited bundle offer",
+      "rationale": "Waiting captures pre-festival demand recovery while staying within the no-cut-during-festival-window policy.",
+      "result": "success",
+      "outcome_profit_inr": 12800,
+      "outcome_volume_change_pct": 15,
+      "weeks_tracked": 3
+    },
+    {
+      "id": "D017",
+      "date": "2025-03-12",
+      "situation": "New competitor entered market with aggressive 20% below-average pricing, our inventory normal, no events",
+      "decision": "Hold price, differentiate on service and bundling rather than price matching",
+      "rationale": "Matching a new entrant's introductory pricing would have required cuts beyond the 8% policy cap; competed on value instead.",
+      "result": "success",
+      "outcome_profit_inr": 13200,
+      "outcome_volume_change_pct": -3,
+      "weeks_tracked": 6
+    },
+    {
+      "id": "D018",
+      "date": "2025-11-28",
+      "situation": "Sales down 30%, competitor cut price 25%, severe overstock 85 days supply, no events, projected impact above 50000 INR",
+      "decision": "Recommended maximum 8% cut plus clearance bundle, escalated for human approval before execution",
+      "rationale": "Severe situation warranted the maximum policy-allowed cut; impact size exceeded the auto-approval threshold, so it was routed to a human.",
+      "result": "success",
+      "outcome_profit_inr": 7200,
+      "outcome_volume_change_pct": 48,
+      "weeks_tracked": 2
+    },
+    {
+      "id": "D019",
+      "date": "2025-05-30",
+      "situation": "Sales stable, no competitor movement, inventory normal, routine week",
+      "decision": "No action, continue monitoring",
+      "rationale": "No signal in any dimension (sales, competitor, inventory) that warranted intervention.",
+      "result": "success",
+      "outcome_profit_inr": 11800,
+      "outcome_volume_change_pct": 0,
+      "weeks_tracked": 4
+    },
+    {
+      "id": "D020",
+      "date": "2025-12-02",
+      "situation": "Sales down 14%, competitor cut price 9%, inventory high 47 days supply, festival in 2 days",
+      "decision": "Hold price through festival window per policy, plan post-festival clearance if overstock persists",
+      "rationale": "Festival is imminent; policy prohibits cuts in this window and festival demand is expected to absorb some of the overstock naturally.",
+      "result": "success",
+      "outcome_profit_inr": 14900,
+      "outcome_volume_change_pct": 22,
+      "weeks_tracked": 3
+    }
+  ]
+}

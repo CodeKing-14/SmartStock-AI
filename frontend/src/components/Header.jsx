@@ -10,13 +10,18 @@ import {
 
 export default function Header({ 
   activePage, 
-  setActivePage 
+  setActivePage,
+  analysisData
 }) {
   const [showNotifications, setShowNotifications] = useState(false);
 
+  const transfers = analysisData?.logistics_global?.transfers || analysisData?.logistics?.transfers || [];
+  const totalRoi = analysisData?.logistics_global?.total_roi || analysisData?.logistics?.total_roi || 0;
+  const storeCount = Object.keys(analysisData?.stores || {}).length;
+
   return (
     <header className="top-header">
-      {/* Page Title & Status (Removed duplicate SmartStock AI and AI subtitles) */}
+      {/* Page Title & Status */}
       <div className="header-left">
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <h2 style={{ fontSize: '18px', fontWeight: 800, color: 'var(--text-primary)', margin: 0, letterSpacing: '-0.02em' }}>
@@ -27,7 +32,7 @@ export default function Header({
           </span>
         </div>
         <div style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: 500 }}>
-          Autonomous Multi-Store Inventory Balancing Hub
+          {analysisData?.meta?.chain_name || 'Autonomous Multi-Store Inventory Balancing Hub'}
         </div>
       </div>
 
@@ -47,10 +52,12 @@ export default function Header({
           <span>CURRENT MISSION:</span>
         </div>
         <span style={{ fontSize: '13px', fontWeight: 800, color: 'var(--text-primary)' }}>
-          Shift 150 Packets: Warehouse A → Warehouse B
+          {transfers.length > 0
+            ? `Shift ${transfers[0].qty} pkts: Store ${transfers[0].from_store} → Store ${transfers[0].to_store}`
+            : (storeCount > 0 ? `${storeCount} Stores Synchronized • Network Balanced` : 'Shift 150 Packets: Warehouse A → Warehouse B')}
         </span>
         <span style={{ fontSize: '11px', background: '#ecfdf5', color: '#047857', border: '1px solid #a7f3d0', padding: '2px 8px', borderRadius: '12px', fontWeight: 700 }}>
-          +$17,925 Net Gain
+          {totalRoi > 0 ? `+₹${totalRoi.toLocaleString()} Net ROI` : '+₹17,925 Net Gain'}
         </span>
       </div>
 

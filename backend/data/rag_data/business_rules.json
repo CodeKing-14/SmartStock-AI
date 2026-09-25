@@ -1,0 +1,109 @@
+{
+  "rules": [
+    {
+      "id": "R001",
+      "category": "pricing",
+      "rule": "Never cut price more than 8% in a single week",
+      "enforcement": "hard",
+      "reason": "Protects brand perception and prevents panic pricing"
+    },
+    {
+      "id": "R002",
+      "category": "pricing",
+      "rule": "Maintain minimum gross margin of 15% on all SKUs",
+      "enforcement": "hard",
+      "reason": "Below this, unit economics break down"
+    },
+    {
+      "id": "R003",
+      "category": "pricing",
+      "rule": "Do not cut prices during festival weeks or major sale events",
+      "enforcement": "hard",
+      "reason": "Demand is inelastic during festivals; cutting wastes margin customers would have paid anyway"
+    },
+    {
+      "id": "R004",
+      "category": "pricing",
+      "rule": "Do not match every competitor price cut automatically",
+      "enforcement": "soft",
+      "reason": "Price wars erode category margin for everyone; evaluate case by case"
+    },
+    {
+      "id": "R005",
+      "category": "pricing",
+      "rule": "Price changes should not repeat more than once per 7 days for the same SKU",
+      "enforcement": "hard",
+      "reason": "Frequent repricing confuses customers and looks unstable"
+    },
+    {
+      "id": "R006",
+      "category": "pricing",
+      "rule": "New product launches may use promotional pricing down to 8% below target margin for the first 4 weeks",
+      "enforcement": "soft",
+      "reason": "Volume and reviews matter more than margin during launch"
+    },
+    {
+      "id": "R007",
+      "category": "inventory",
+      "rule": "Flag as overstock risk when days-of-supply exceeds 45 days",
+      "enforcement": "hard",
+      "reason": "Capital tied up in unsold inventory, storage cost accrues"
+    },
+    {
+      "id": "R008",
+      "category": "inventory",
+      "rule": "Flag as stockout risk when days-of-supply falls below 7 days and lead time exceeds 5 days",
+      "enforcement": "hard",
+      "reason": "Insufficient buffer to reorder before running out"
+    },
+    {
+      "id": "R009",
+      "category": "inventory",
+      "rule": "Maintain minimum 14 days of safety stock for top 20% of SKUs by revenue",
+      "enforcement": "soft",
+      "reason": "Best sellers should rarely go out of stock"
+    },
+    {
+      "id": "R010",
+      "category": "logistics",
+      "rule": "Only approve inter-store transfers when ROI exceeds 20%",
+      "enforcement": "hard",
+      "reason": "Transfer cost must be clearly justified by profit saved"
+    },
+    {
+      "id": "R011",
+      "category": "logistics",
+      "rule": "Do not transfer stock if destination store's own reorder is arriving within 3 days",
+      "enforcement": "soft",
+      "reason": "Unnecessary transfer cost if restock is already inbound"
+    },
+    {
+      "id": "R012",
+      "category": "approval",
+      "rule": "Any single decision affecting more than ₹50,000 in projected impact requires human approval",
+      "enforcement": "hard",
+      "reason": "High-stakes decisions need a human in the loop"
+    },
+    {
+      "id": "R013",
+      "category": "approval",
+      "rule": "Any price increase above 10% requires human approval regardless of impact size",
+      "enforcement": "hard",
+      "reason": "Large increases carry reputational risk beyond pure economics"
+    },
+    {
+      "id": "R014",
+      "category": "brand",
+      "rule": "Do not discount premium-tier SKUs by more than 5% under any circumstance",
+      "enforcement": "hard",
+      "reason": "Premium positioning depends on price stability"
+    },
+    {
+      "id": "R015",
+      "category": "brand",
+      "rule": "Prefer bundling or value-adds over direct price cuts when clearing overstock",
+      "enforcement": "soft",
+      "reason": "Bundling clears inventory without anchoring customers to a lower reference price"
+    }
+  ]
+}

@@ -1,16 +1,34 @@
 import React from 'react';
-import { 
-  Tag, 
-  DollarSign, 
-  Lock, 
-  ArrowLeft, 
-  ArrowRight, 
-  TrendingUp, 
-  CheckCircle2, 
-  ShieldCheck 
+import {
+  Tag,
+  DollarSign,
+  Lock,
+  ArrowLeft,
+  ArrowRight,
+  TrendingUp,
+  TrendingDown
 } from 'lucide-react';
 
-export default function PricingAiPage({ onBackToBoss, onNavigateToPage }) {
+export default function PricingAiPage({ onBackToBoss, onNavigateToPage, analysisData }) {
+  const stores = analysisData?.stores || {};
+  const storeIds = Object.keys(stores);
+
+  if (!analysisData || storeIds.length === 0) {
+    return (
+      <div style={{ padding: '40px', textAlign: 'center', background: 'white', borderRadius: '8px' }}>
+        <Tag size={48} color="#cbd5e1" style={{ marginBottom: '16px' }} />
+        <h3 style={{ margin: '0 0 8px 0', color: '#334155' }}>No Analysis Data</h3>
+        <p style={{ color: '#64748b' }}>Upload a file in the Boss AI page to view the Pricing AI report.</p>
+        <button
+          onClick={onBackToBoss}
+          style={{ marginTop: '20px', padding: '8px 16px', background: '#059669', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
+        >
+          Go to Boss AI
+        </button>
+      </div>
+    );
+  }
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '22px' }}>
       {/* Top Header */}
@@ -79,73 +97,74 @@ export default function PricingAiPage({ onBackToBoss, onNavigateToPage }) {
         </div>
       </div>
 
-      {/* Main Pricing Recommendation Callout */}
-      <div style={{
-        background: '#ecfdf5',
-        border: '1.5px solid #a7f3d0',
-        borderRadius: 'var(--radius-lg)',
-        padding: '20px',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between'
-      }}>
-        <div style={{ display: 'flex', alignItems: 'flex-start', gap: '14px' }}>
-          <div style={{ background: '#10b981', color: 'white', padding: '8px', borderRadius: '8px', marginTop: '2px' }}>
-            <Lock size={20} />
-          </div>
-          <div>
-            <div style={{ fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', color: '#047857' }}>
-              PRICING STRATEGY AUDIT
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+        {storeIds.map((storeId) => {
+          const storeData = stores[storeId].store;
+          const pricingData = stores[storeId].pricing;
+
+          return (
+            <div key={storeId} className="dashboard-section-card" style={{ background: 'white', padding: '20px', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
+              <h3 style={{ fontSize: '18px', fontWeight: 700, color: '#1e293b', marginBottom: '16px' }}>
+                {storeData.store_name} ({storeData.store_id})
+              </h3>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                {storeData.products.map((product) => {
+                  const productPricing = pricingData[product.product_id];
+                  if (!productPricing) return null;
+
+                  const isHold = productPricing.action === 'hold';
+                  const isIncrease = productPricing.action === 'increase';
+                  const colorCode = isHold ? '#059669' : (isIncrease ? '#2563eb' : '#dc2626');
+                  const bgColor = isHold ? '#ecfdf5' : (isIncrease ? '#eff6ff' : '#fef2f2');
+                  const Icon = isHold ? Lock : (isIncrease ? TrendingUp : TrendingDown);
+
+                  return (
+                    <div key={product.product_id} style={{
+                      background: '#f8fafc',
+                      border: '1px solid #cbd5e1',
+                      borderRadius: '8px',
+                      padding: '16px',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: '12px'
+                    }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                          <div style={{ background: bgColor, color: colorCode, padding: '8px', borderRadius: '8px' }}>
+                            <Icon size={20} />
+                          </div>
+                          <div>
+                            <h4 style={{ margin: '0 0 4px 0', fontSize: '16px', fontWeight: 600, color: '#0f172a' }}>
+                              {product.name}
+                            </h4>
+                            <div style={{ fontSize: '13px', color: '#475569', fontWeight: 500 }}>
+                              {isHold ? `HOLD at ₹${productPricing.new_price}` : `${isIncrease ? 'RAISE' : 'LOWER'} price to ₹${productPricing.new_price} (${productPricing.percentage > 0 ? '+' : ''}${productPricing.percentage}%)`}
+                            </div>
+                          </div>
+                        </div>
+                        <div style={{ textAlign: 'right' }}>
+                          <div style={{ fontSize: '12px', color: '#64748b', fontWeight: 600 }}>Expected Weekly Profit</div>
+                          <div style={{ fontSize: '18px', fontWeight: 700, color: colorCode }}>₹{productPricing.expected_weekly_profit}</div>
+                        </div>
+                      </div>
+
+                      <div style={{ background: 'white', padding: '12px', borderRadius: '6px', border: '1px solid #e2e8f0', fontSize: '13px', color: '#334155' }}>
+                        <strong>Reasoning:</strong> {productPricing.reasoning}
+                      </div>
+
+                      <div style={{ display: 'flex', gap: '16px', fontSize: '12px', color: '#64748b' }}>
+                        <span><strong>Expected Volume:</strong> {productPricing.expected_volume} units</span>
+                        <span><strong>Confidence:</strong> {Math.round(productPricing.confidence * 100)}%</span>
+                        {productPricing.risk && <span><strong>Risk:</strong> {productPricing.risk}</span>}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
             </div>
-            <div style={{ fontSize: '16px', fontWeight: 700, color: '#064e3b', marginTop: '2px' }}>
-              Price Locked at $120.00 / Packet — Zero Discount Needed
-            </div>
-            <div style={{ fontSize: '13px', color: '#334155', marginTop: '4px', maxWidth: '750px' }}>
-              Downtown competitors are completely out of stock. Shifting 150 packets allows us to sell at full retail price without discounting, yielding <strong>$54.00 profit per packet ($8,100 net profit)</strong>.
-            </div>
-          </div>
-        </div>
-
-        <div style={{ textAlign: 'right', minWidth: '170px' }}>
-          <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Revenue on 150 Pkts</div>
-          <div style={{ fontSize: '24px', fontWeight: 800, color: '#059669', fontFamily: 'var(--font-heading)' }}>
-            $18,000.00
-          </div>
-          <div style={{ fontSize: '11px', color: '#047857', fontWeight: 600 }}>45.0% Profit Margin</div>
-        </div>
-      </div>
-
-      {/* Packet Economics Grid */}
-      <div className="dashboard-section-card">
-        <h3 style={{ fontSize: '15.5px', fontWeight: 700, marginBottom: '14px', color: 'var(--text-primary)' }}>
-          Packet Economics: UltraBass Headphones (150 Packets Shift)
-        </h3>
-
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px' }}>
-          <div style={{ background: '#f8fafc', padding: '16px', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-subtle)' }}>
-            <div style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: 600 }}>Retail Selling Price</div>
-            <div style={{ fontSize: '22px', fontWeight: 800, color: 'var(--text-primary)', margin: '4px 0' }}>$120.00</div>
-            <div style={{ fontSize: '11.5px', color: 'var(--text-secondary)' }}>Full price (No discount needed)</div>
-          </div>
-
-          <div style={{ background: '#f8fafc', padding: '16px', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-subtle)' }}>
-            <div style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: 600 }}>Unit Wholesale Cost</div>
-            <div style={{ fontSize: '22px', fontWeight: 800, color: 'var(--text-muted)', margin: '4px 0' }}>$66.00</div>
-            <div style={{ fontSize: '11.5px', color: 'var(--text-secondary)' }}>Factory production cost</div>
-          </div>
-
-          <div style={{ background: '#ecfdf5', padding: '16px', borderRadius: 'var(--radius-md)', border: '1px solid #a7f3d0' }}>
-            <div style={{ fontSize: '11px', color: '#047857', fontWeight: 600 }}>Profit Per Packet</div>
-            <div style={{ fontSize: '22px', fontWeight: 800, color: '#059669', margin: '4px 0' }}>$54.00</div>
-            <div style={{ fontSize: '11.5px', color: '#065f46' }}>45% gross operating profit</div>
-          </div>
-
-          <div style={{ background: '#f5f3ff', padding: '16px', borderRadius: 'var(--radius-md)', border: '1px solid #ddd6fe' }}>
-            <div style={{ fontSize: '11px', color: '#6d28d9', fontWeight: 600 }}>150 Packets Total Sales</div>
-            <div style={{ fontSize: '22px', fontWeight: 800, color: '#7c3aed', margin: '4px 0' }}>$18,000</div>
-            <div style={{ fontSize: '11.5px', color: '#5b21b6' }}>150 pkts × $120.00</div>
-          </div>
-        </div>
+          );
+        })}
       </div>
 
       {/* Submission to Boss AI */}
@@ -160,10 +179,10 @@ export default function PricingAiPage({ onBackToBoss, onNavigateToPage }) {
       }}>
         <div>
           <div style={{ fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', color: 'var(--text-muted)' }}>
-            Pricing AI Report to Boss AI:
+            Pricing AI Report Status:
           </div>
           <div style={{ fontSize: '14px', fontWeight: 700, color: 'var(--text-primary)', marginTop: '2px' }}>
-            “Price is locked at $120.00. Moving 150 packets protects $18,000 in gross revenue.”
+            Prices optimized based on elasticity and sent to Boss AI.
           </div>
         </div>
 

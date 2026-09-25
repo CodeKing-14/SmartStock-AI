@@ -3,12 +3,51 @@ import {
   Boxes, 
   AlertTriangle, 
   ArrowLeft, 
-  ArrowRight, 
-  CheckCircle2, 
-  Layers 
+  ArrowRight,
+  CheckCircle
 } from 'lucide-react';
 
-export default function InventoryAiPage({ onBackToBoss, onNavigateToPage }) {
+export default function InventoryAiPage({ onBackToBoss, onNavigateToPage, analysisData }) {
+  const stores = analysisData?.stores || {};
+  const storeIds = Object.keys(stores);
+
+  if (!analysisData || storeIds.length === 0) {
+    return (
+      <div style={{ padding: '40px', textAlign: 'center', background: 'white', borderRadius: '8px' }}>
+        <Boxes size={48} color="#cbd5e1" style={{ marginBottom: '16px' }} />
+        <h3 style={{ margin: '0 0 8px 0', color: '#334155' }}>No Analysis Data</h3>
+        <p style={{ color: '#64748b' }}>Upload a file in the Boss AI page to view the Inventory AI report.</p>
+        <button 
+          onClick={onBackToBoss}
+          style={{ marginTop: '20px', padding: '8px 16px', background: '#d97706', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
+        >
+          Go to Boss AI
+        </button>
+      </div>
+    );
+  }
+  const [selectedStore, setSelectedStore] = React.useState('all');
+
+  // Compute summary stats
+  let stockoutRisks = 0;
+  let overstockRisks = 0;
+  let safeSkus = 0;
+  let validationFlags = 0;
+
+  storeIds.forEach(id => {
+    const s = stores[id];
+    Object.values(s.inventory || {}).forEach(inv => {
+      if (inv.flag && inv.risk === 'stockout') stockoutRisks++;
+      else if (inv.flag && inv.risk === 'overstock') overstockRisks++;
+      else safeSkus++;
+    });
+    Object.values(s.spoilage || {}).forEach(sp => { if (sp.flag) validationFlags++; });
+    Object.values(s.basket || {}).forEach(bk => { if (bk.flag) validationFlags++; });
+    Object.values(s.game_theory || {}).forEach(gt => { if (gt.flag) validationFlags++; });
+  });
+
+  const displayedStores = selectedStore === 'all' ? storeIds : [selectedStore];
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '22px' }}>
       {/* Top Header */}
@@ -50,7 +89,7 @@ export default function InventoryAiPage({ onBackToBoss, onNavigateToPage }) {
             borderRadius: '12px',
             textTransform: 'uppercase'
           }}>
-            AI Specialist 03
+            AI Specialist 03 + Validation Agents
           </span>
         </div>
 
@@ -68,126 +107,209 @@ export default function InventoryAiPage({ onBackToBoss, onNavigateToPage }) {
           </div>
           <div>
             <h1 style={{ fontSize: '22px', fontWeight: 800, margin: 0, color: 'white' }}>
-              Inventory AI
+              Inventory & Validation AI Dashboard
             </h1>
             <p style={{ fontSize: '12.5px', color: '#fef3c7', margin: '2px 0 0 0' }}>
-              Autonomous warehouse stock balance audit, shelf capacity monitoring, and safety buffer calculation.
+              Autonomous stock coverage audit, Spoilage detection, Basket cannibalization alerts, and Game Theory retaliation checks.
             </p>
           </div>
         </div>
       </div>
 
-      {/* Main Inventory Finding Callout */}
-      <div style={{
-        background: '#fffbeb',
-        border: '1.5px solid #fde68a',
-        borderRadius: 'var(--radius-lg)',
-        padding: '20px',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between'
-      }}>
-        <div style={{ display: 'flex', alignItems: 'flex-start', gap: '14px' }}>
-          <div style={{ background: '#f59e0b', color: 'white', padding: '8px', borderRadius: '8px', marginTop: '2px' }}>
-            <AlertTriangle size={20} />
-          </div>
-          <div>
-            <div style={{ fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', color: '#b45309' }}>
-              WAREHOUSE STOCK AUDIT
-            </div>
-            <div style={{ fontSize: '16px', fontWeight: 700, color: '#92400e', marginTop: '2px' }}>
-              Warehouse A has 500 Packets (Surplus) vs Warehouse B has 20 Packets (Shortage)
-            </div>
-            <div style={{ fontSize: '13px', color: '#334155', marginTop: '4px', maxWidth: '750px' }}>
-              Shifting <strong>150 packets from Warehouse A to Warehouse B</strong> leaves Warehouse A with 350 packets (over 45 days of safety stock), while replenishing Warehouse B to 170 packets to easily meet weekend demand.
-            </div>
-          </div>
+      {/* Top Inventory Metric Cards */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '14px' }}>
+        <div style={{ background: 'white', padding: '16px', borderRadius: '12px', border: '1px solid #e2e8f0', boxShadow: 'var(--shadow-xs)' }}>
+          <div style={{ fontSize: '12px', color: '#64748b', fontWeight: 600 }}>Stockout Risks</div>
+          <div style={{ fontSize: '22px', fontWeight: 800, color: '#dc2626', marginTop: '4px' }}>{stockoutRisks} SKUs</div>
+          <div style={{ fontSize: '11px', color: '#dc2626', marginTop: '2px', fontWeight: 600 }}>Depletion before lead time</div>
         </div>
-
-        <div style={{ textAlign: 'right', minWidth: '170px' }}>
-          <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Optimal Rebalance</div>
-          <div style={{ fontSize: '24px', fontWeight: 800, color: '#b45309', fontFamily: 'var(--font-heading)' }}>
-            150 Packets
-          </div>
-          <div style={{ fontSize: '11px', color: '#92400e', fontWeight: 600 }}>Shift Recommended</div>
+        <div style={{ background: 'white', padding: '16px', borderRadius: '12px', border: '1px solid #e2e8f0', boxShadow: 'var(--shadow-xs)' }}>
+          <div style={{ fontSize: '12px', color: '#64748b', fontWeight: 600 }}>Overstock / Spoilage</div>
+          <div style={{ fontSize: '22px', fontWeight: 800, color: '#d97706', marginTop: '4px' }}>{overstockRisks} SKUs</div>
+          <div style={{ fontSize: '11px', color: '#d97706', marginTop: '2px' }}>Excess holding / Markdown needed</div>
+        </div>
+        <div style={{ background: 'white', padding: '16px', borderRadius: '12px', border: '1px solid #e2e8f0', boxShadow: 'var(--shadow-xs)' }}>
+          <div style={{ fontSize: '12px', color: '#64748b', fontWeight: 600 }}>Safe Stock Levels</div>
+          <div style={{ fontSize: '22px', fontWeight: 800, color: '#059669', marginTop: '4px' }}>{safeSkus} SKUs</div>
+          <div style={{ fontSize: '11px', color: '#059669', marginTop: '2px', fontWeight: 600 }}>Within safety buffer</div>
+        </div>
+        <div style={{ background: 'white', padding: '16px', borderRadius: '12px', border: '1px solid #e2e8f0', boxShadow: 'var(--shadow-xs)' }}>
+          <div style={{ fontSize: '12px', color: '#64748b', fontWeight: 600 }}>Validation Warnings</div>
+          <div style={{ fontSize: '22px', fontWeight: 800, color: '#7c3aed', marginTop: '4px' }}>{validationFlags} Flags</div>
+          <div style={{ fontSize: '11px', color: '#7c3aed', marginTop: '2px' }}>Spoilage, Basket & Game Theory</div>
         </div>
       </div>
 
-      {/* Before vs After Comparison */}
-      <div className="dashboard-section-card">
-        <h3 style={{ fontSize: '15.5px', fontWeight: 700, marginBottom: '16px', color: 'var(--text-primary)' }}>
-          Warehouse Capacity Before vs After Shifting 150 Packets
-        </h3>
+      {/* Store Filter Tabs */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', background: '#f1f5f9', padding: '4px', borderRadius: '10px', width: 'fit-content' }}>
+        <button
+          type="button"
+          onClick={() => setSelectedStore('all')}
+          style={{
+            padding: '6px 14px',
+            borderRadius: '8px',
+            border: 'none',
+            fontSize: '12.5px',
+            fontWeight: selectedStore === 'all' ? 700 : 500,
+            background: selectedStore === 'all' ? 'white' : 'transparent',
+            color: selectedStore === 'all' ? '#b45309' : '#64748b',
+            boxShadow: selectedStore === 'all' ? '0 1px 3px rgba(0,0,0,0.1)' : 'none',
+            cursor: 'pointer'
+          }}
+        >
+          All Stores ({storeIds.length})
+        </button>
+        {storeIds.map(id => (
+          <button
+            key={id}
+            type="button"
+            onClick={() => setSelectedStore(id)}
+            style={{
+              padding: '6px 14px',
+              borderRadius: '8px',
+              border: 'none',
+              fontSize: '12.5px',
+              fontWeight: selectedStore === id ? 700 : 500,
+              background: selectedStore === id ? 'white' : 'transparent',
+              color: selectedStore === id ? '#b45309' : '#64748b',
+              boxShadow: selectedStore === id ? '0 1px 3px rgba(0,0,0,0.1)' : 'none',
+              cursor: 'pointer'
+            }}
+          >
+            {stores[id].store?.store_name || id}
+          </button>
+        ))}
+      </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
-          {/* Warehouse A Card */}
-          <div style={{ border: '2px solid #bfdbfe', borderRadius: 'var(--radius-lg)', padding: '18px', background: '#f8faff' }}>
-            <span style={{ fontSize: '11px', fontWeight: 700, color: '#1d4ed8', textTransform: 'uppercase' }}>
-              ORIGIN WAREHOUSE
-            </span>
-            <h4 style={{ fontSize: '16px', fontWeight: 800, color: 'var(--text-primary)', margin: '4px 0 10px 0' }}>
-              Warehouse A (Central Hub)
-            </h4>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+        {displayedStores.map((storeId) => {
+          const storeData = stores[storeId].store;
+          const inventoryData = stores[storeId].inventory || {};
+          const spoilageData = stores[storeId].spoilage || {};
+          const basketData = stores[storeId].basket || {};
+          const gameTheoryData = stores[storeId].game_theory || {};
+          const negotiations = stores[storeId].negotiation_history || [];
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', margin: '10px 0' }}>
-              <div style={{ background: '#eff6ff', padding: '10px', borderRadius: '8px', border: '1px solid #bfdbfe' }}>
-                <div style={{ fontSize: '10px', color: '#1e40af', fontWeight: 600 }}>CURRENT STOCK</div>
-                <div style={{ fontSize: '22px', fontWeight: 800, color: '#1d4ed8' }}>500 pkts</div>
-                <div style={{ fontSize: '10.5px', color: '#1e40af' }}>95% Shelf Capacity</div>
+          return (
+            <div key={storeId} className="dashboard-section-card" style={{ background: 'white', padding: '22px', borderRadius: '14px', border: '1px solid #e2e8f0' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                <h3 style={{ fontSize: '18px', fontWeight: 700, color: '#1e293b', margin: 0 }}>
+                  {storeData.store_name} ({storeData.store_id})
+                </h3>
+                {negotiations.length > 0 && (
+                  <span style={{ fontSize: '11px', fontWeight: 700, background: '#ede9fe', color: '#6d28d9', padding: '3px 10px', borderRadius: '12px' }}>
+                    👑 {negotiations.length} Boss AI Interventions
+                  </span>
+                )}
               </div>
 
-              <div style={{ background: '#ecfdf5', padding: '10px', borderRadius: '8px', border: '1px solid #a7f3d0' }}>
-                <div style={{ fontSize: '10px', color: '#047857', fontWeight: 600 }}>AFTER -150 SHIFT</div>
-                <div style={{ fontSize: '22px', fontWeight: 800, color: '#059669' }}>350 pkts</div>
-                <div style={{ fontSize: '10.5px', color: '#047857' }}>✅ Safe 45-day buffer</div>
+              {/* Boss AI Enforced Caps Notice */}
+              {negotiations.length > 0 && (
+                <div style={{ background: '#f5f3ff', border: '1px solid #ddd6fe', borderRadius: '8px', padding: '12px 16px', marginBottom: '16px' }}>
+                  <div style={{ fontSize: '12px', fontWeight: 700, color: '#5b21b6', marginBottom: '4px' }}>
+                    👑 BOSS AI ITERATIVE NEGOTIATION ACTIONS ENFORCED:
+                  </div>
+                  {negotiations.map((n, i) => (
+                    <div key={i} style={{ fontSize: '12.5px', color: '#4c1d95', marginLeft: '12px' }}>
+                      • <strong>SKU {n.sku}:</strong> {n.reason}
+                    </div>
+                  ))}
+                </div>
+              )}
+              
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                {storeData.products.map((product) => {
+                  const productInventory = inventoryData[product.product_id];
+                  if (!productInventory) return null;
+
+                  const isFlagged = productInventory.flag;
+                  const riskType = productInventory.risk; // stockout, overstock, none
+                  
+                  const bgColor = isFlagged ? (riskType === 'stockout' ? '#fef2f2' : '#fffbeb') : '#ecfdf5';
+                  const borderColor = isFlagged ? (riskType === 'stockout' ? '#fecaca' : '#fde68a') : '#a7f3d0';
+                  const textColor = isFlagged ? (riskType === 'stockout' ? '#b91c1c' : '#b45309') : '#047857';
+                  const Icon = isFlagged ? AlertTriangle : CheckCircle;
+
+                  const sp = spoilageData[product.product_id];
+                  const bk = basketData[product.product_id];
+                  const gt = gameTheoryData[product.product_id];
+
+                  return (
+                    <div key={product.product_id} style={{ 
+                      background: bgColor, 
+                      border: `1px solid ${borderColor}`, 
+                      borderRadius: '8px', 
+                      padding: '16px',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: '12px'
+                    }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                          <div style={{ background: 'white', color: textColor, padding: '8px', borderRadius: '8px', border: `1px solid ${borderColor}` }}>
+                            <Icon size={20} />
+                          </div>
+                          <div>
+                            <h4 style={{ margin: '0 0 4px 0', fontSize: '16px', fontWeight: 700, color: '#0f172a' }}>
+                              {product.name}
+                            </h4>
+                            <div style={{ fontSize: '13px', color: textColor, fontWeight: 700, textTransform: 'uppercase' }}>
+                              {isFlagged ? `${riskType} RISK` : 'SAFE: NO RISK'}
+                            </div>
+                          </div>
+                        </div>
+                        <div style={{ textAlign: 'right' }}>
+                          <div style={{ fontSize: '12px', color: '#64748b', fontWeight: 600 }}>Days until Issue</div>
+                          <div style={{ fontSize: '18px', fontWeight: 700, color: textColor }}>{productInventory.days_until_issue > 365 ? '365+' : productInventory.days_until_issue} Days</div>
+                        </div>
+                      </div>
+
+                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px' }}>
+                        <div style={{ background: 'white', padding: '10px', borderRadius: '6px', border: `1px solid ${borderColor}`, fontSize: '12.5px', color: '#334155' }}>
+                          <span style={{ color: '#64748b' }}>Current Inventory:</span> <strong style={{ color: '#0f172a' }}>{productInventory.current_inventory} pkts</strong>
+                        </div>
+                        <div style={{ background: 'white', padding: '10px', borderRadius: '6px', border: `1px solid ${borderColor}`, fontSize: '12.5px', color: '#334155' }}>
+                          <span style={{ color: '#64748b' }}>Weekly Demand:</span> <strong style={{ color: '#0f172a' }}>{productInventory.demanded_volume} pkts</strong>
+                        </div>
+                        <div style={{ background: 'white', padding: '10px', borderRadius: '6px', border: `1px solid ${borderColor}`, fontSize: '12.5px', color: '#334155' }}>
+                          <span style={{ color: '#64748b' }}>Safety Buffer Lead Time:</span> <strong style={{ color: '#0f172a' }}>{productInventory.lead_time} days</strong>
+                        </div>
+                      </div>
+
+                      <div style={{ background: 'white', padding: '12px', borderRadius: '6px', border: `1px solid ${borderColor}`, fontSize: '13px', color: '#334155' }}>
+                        <strong>Inventory AI Recommendation:</strong> {productInventory.recommendation}
+                      </div>
+
+                      {/* Validation Agents Badges & Flags */}
+                      {(sp?.flag || bk?.flag || gt?.flag) && (
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', background: 'rgba(255,255,255,0.7)', padding: '10px', borderRadius: '6px', border: '1px solid rgba(0,0,0,0.06)' }}>
+                          <div style={{ fontSize: '11px', fontWeight: 700, color: '#475569', textTransform: 'uppercase' }}>
+                            Validation Agents Cross-Check:
+                          </div>
+                          {sp?.flag && (
+                            <div style={{ fontSize: '12px', color: '#b91c1c' }}>
+                              ☣️ <strong>Spoilage AI:</strong> Spoilage risk detected. {sp.recommendation}
+                            </div>
+                          )}
+                          {bk?.flag && (
+                            <div style={{ fontSize: '12px', color: '#b45309' }}>
+                              🛒 <strong>Basket AI:</strong> Cannibalization risk. {bk.recommendation}
+                            </div>
+                          )}
+                          {gt?.flag && (
+                            <div style={{ fontSize: '12px', color: '#6d28d9' }}>
+                              ⚔️ <strong>Game Theory AI:</strong> Competitor reaction risk. {gt.recommendation}
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
               </div>
             </div>
-
-            <div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', marginBottom: '4px' }}>
-                <span style={{ color: 'var(--text-secondary)' }}>Shelf Capacity</span>
-                <span style={{ fontWeight: 700 }}>95% → 65% Optimal</span>
-              </div>
-              <div style={{ height: '7px', background: '#e2e8f0', borderRadius: '4px', overflow: 'hidden' }}>
-                <div style={{ width: '65%', height: '100%', background: '#3b82f6' }}></div>
-              </div>
-            </div>
-          </div>
-
-          {/* Warehouse B Card */}
-          <div style={{ border: '2px solid #fed7aa', borderRadius: 'var(--radius-lg)', padding: '18px', background: '#fffaf5' }}>
-            <span style={{ fontSize: '11px', fontWeight: 700, color: '#c2410c', textTransform: 'uppercase' }}>
-              DESTINATION WAREHOUSE
-            </span>
-            <h4 style={{ fontSize: '16px', fontWeight: 800, color: 'var(--text-primary)', margin: '4px 0 10px 0' }}>
-              Warehouse B (City Center)
-            </h4>
-
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', margin: '10px 0' }}>
-              <div style={{ background: '#fef2f2', padding: '10px', borderRadius: '8px', border: '1px solid #fee2e2' }}>
-                <div style={{ fontSize: '10px', color: '#991b1b', fontWeight: 600 }}>CURRENT STOCK</div>
-                <div style={{ fontSize: '22px', fontWeight: 800, color: '#dc2626' }}>20 pkts</div>
-                <div style={{ fontSize: '10.5px', color: '#b91c1c' }}>⚠️ Stockout in 2 days</div>
-              </div>
-
-              <div style={{ background: '#ecfdf5', padding: '10px', borderRadius: '8px', border: '1px solid #a7f3d0' }}>
-                <div style={{ fontSize: '10px', color: '#047857', fontWeight: 600 }}>AFTER +150 SHIFT</div>
-                <div style={{ fontSize: '22px', fontWeight: 800, color: '#059669' }}>170 pkts</div>
-                <div style={{ fontSize: '10.5px', color: '#047857' }}>✅ Healthy 75% Capacity</div>
-              </div>
-            </div>
-
-            <div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', marginBottom: '4px' }}>
-                <span style={{ color: 'var(--text-secondary)' }}>Shelf Capacity</span>
-                <span style={{ fontWeight: 700 }}>15% → 75% Healthy</span>
-              </div>
-              <div style={{ height: '7px', background: '#e2e8f0', borderRadius: '4px', overflow: 'hidden' }}>
-                <div style={{ width: '75%', height: '100%', background: 'linear-gradient(90deg, #f59e0b, #10b981)' }}></div>
-              </div>
-            </div>
-          </div>
-        </div>
+          );
+        })}
       </div>
 
       {/* Submission to Boss AI */}
@@ -202,10 +324,10 @@ export default function InventoryAiPage({ onBackToBoss, onNavigateToPage }) {
       }}>
         <div>
           <div style={{ fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', color: 'var(--text-muted)' }}>
-            Inventory AI Report to Boss AI:
+            Inventory AI Report Status:
           </div>
           <div style={{ fontSize: '14px', fontWeight: 700, color: 'var(--text-primary)', marginTop: '2px' }}>
-            “Warehouse A has 150 surplus packets available. Warehouse B is ready to receive.”
+            Stock flags and recommendations generated and sent to Boss AI.
           </div>
         </div>
 

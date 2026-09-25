@@ -35,6 +35,15 @@ except ImportError:
 
 from pipeline import run_pipeline, RESULTS_DIR, DATA_DIR
 
+try:
+    from rag_agent import OllamaRAGAgent
+    from langchain_core.documents import Document
+except ImportError:
+    OllamaRAGAgent = None
+    Document = None
+
+rag_agent_instance = None
+
 # ---------------------------------------------------------------------------
 # App setup
 # ---------------------------------------------------------------------------
@@ -52,6 +61,30 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+@app.on_event("startup")
+def startup_event():
+    global rag_agent_instance
+    if OllamaRAGAgent is None or Document is None:
+        print("Warning: RAG Agent dependencies are missing. Boss AI chat will be unavailable.")
+        return
+    try:
+        rag_agent_instance = OllamaRAGAgent()
+        
+        # Load static rag_data
+        rag_data_dir = DATA_DIR / "rag_data"
+        documents = []
+        if rag_data_dir.exists():
+            for json_file in rag_data_dir.glob("*.json"):
+                with open(json_file, "r", encoding="utf-8", errors="replace") as f:
+                    content = f.read()
+                    documents.append(Document(page_content=content, metadata={"source": json_file.name}))
+        
+        if documents:
+            rag_agent_instance.ingest_documents(documents)
+            print(f"Ingested {len(documents)} static documents into RAG.")
+    except Exception as e:
+        print(f"Failed to initialize RAG Agent: {e}")
+        rag_agent_instance = None
 
 # ---------------------------------------------------------------------------
 # Endpoints
@@ -86,38 +119,95 @@ def health():
     }
 
 
-@app.get("/api/sample-data")
-def sample_data():
-    """Return the sample retail_data.json so the frontend can pre-populate the form."""
-    sample_path = DATA_DIR / "retail_data.json"
-    if not sample_path.exists():
-        raise HTTPException(status_code=404, detail="Sample data file not found")
-    with open(sample_path, "r", encoding="utf-8") as f:
-        return json.load(f)
 
 
-@app.get("/api/sample-data/pricing-config")
-def sample_pricing_config():
-    """Return the sample pricing_config.json."""
-    path = DATA_DIR / "pricing_config.json"
-    if not path.exists():
-        raise HTTPException(status_code=404, detail="Pricing config file not found")
-    with open(path, "r", encoding="utf-8") as f:
-        return json.load(f)
 
-
-@app.get("/api/sample-data/logistics")
-def sample_logistics_data():
-    """Return the sample logistics_data.json."""
-    path = DATA_DIR / "logistics_data.json"
-    if not path.exists():
-        raise HTTPException(status_code=404, detail="Logistics data file not found")
-    with open(path, "r", encoding="utf-8") as f:
-        return json.load(f)
-
-
+import csv
+import io
+import re
 from pydantic import BaseModel
 from typing import Optional
+
+
+def parse_input_to_retail_data(text: str) -> Optional[dict]:
+    """
+    Attempts to parse user given text as:
+    1. Direct JSON containing 'stores'
+    2. Embedded JSON within text (e.g. ```json ... ```)
+    3. CSV table formatted retail data
+    """
+    if not text or not isinstance(text, str):
+        return None
+    cleaned = text.strip()
+    
+    # 1. Direct JSON
+    try:
+        data = json.loads(cleaned)
+        if isinstance(data, dict) and "stores" in data and isinstance(data["stores"], list):
+            return data
+    except Exception:
+        pass
+
+    # 2. Extract JSON code block
+    json_match = re.search(r"```(?:json)?\s*(\{[\s\S]*?\})\s*```", cleaned)
+    if json_match:
+        try:
+            data = json.loads(json_match.group(1))
+            if isinstance(data, dict) and "stores" in data and isinstance(data["stores"], list):
+                return data
+        except Exception:
+            pass
+
+    # 3. CSV parsing
+    try:
+        reader = csv.DictReader(io.StringIO(cleaned))
+        rows = list(reader)
+        if rows and len(rows) > 0:
+            headers = [h.strip().lower() for h in (reader.fieldnames or [])]
+            if any(k in headers for k in ["product", "product_id", "name", "price", "stock", "our_price"]):
+                stores_map = {}
+                for idx, row in enumerate(rows):
+                    clean_row = {str(k).strip().lower(): str(v).strip() for k, v in row.items() if k}
+                    store_id = clean_row.get("store_id") or clean_row.get("store") or "S1"
+                    store_name = clean_row.get("store_name") or clean_row.get("store") or f"Store {store_id}"
+                    
+                    if store_id not in stores_map:
+                        stores_map[store_id] = {
+                            "store_id": store_id,
+                            "store_name": store_name,
+                            "festival_in_3_days": clean_row.get("festival", "").lower() in ["true", "1", "yes"],
+                            "festival_name": clean_row.get("festival_name"),
+                            "products": []
+                        }
+                    
+                    pid = clean_row.get("product_id") or clean_row.get("sku") or f"P{idx+1}"
+                    name = clean_row.get("name") or clean_row.get("product") or f"Product {pid}"
+                    our_price = float(clean_row.get("our_price") or clean_row.get("price") or 100)
+                    sales_last = float(clean_row.get("sales_last_week") or clean_row.get("sales_last") or 50)
+                    sales_this = float(clean_row.get("sales_this_week") or clean_row.get("sales_this") or 45)
+                    stock = float(clean_row.get("stock_level") or clean_row.get("stock") or 100)
+                    comp_price = float(clean_row.get("competitor_price") or clean_row.get("competitor") or our_price * 0.95)
+                    
+                    stores_map[store_id]["products"].append({
+                        "product_id": pid,
+                        "name": name,
+                        "our_price": our_price,
+                        "sales_last_week": sales_last,
+                        "sales_this_week": sales_this,
+                        "stock_level": stock,
+                        "competitor_price": comp_price,
+                    })
+                if stores_map:
+                    return {
+                        "chain_name": "User Uploaded Network",
+                        "currency": "INR",
+                        "week_label": "Current vs Previous Week",
+                        "stores": list(stores_map.values())
+                    }
+    except Exception:
+        pass
+
+    return None
 
 
 class AnalyzeRequest(BaseModel):
@@ -133,8 +223,7 @@ def analyze_json(req: AnalyzeRequest):
     Run the full SmartStock AI pipeline on the provided retail data.
 
     Send the retail_data JSON directly in the request body.
-    Optionally include pricing_config and logistics_data;
-    if not provided, the backend uses built-in defaults.
+    Sends output to all AIs, ingests all outputs into RAG, and returns RAG verdict.
     """
     retail_data = req.retail_data
     pricing_config = req.pricing_config
@@ -183,12 +272,23 @@ def analyze_json(req: AnalyzeRequest):
                     )
 
     try:
+        # 1. Send data to all AIs in pipeline
         result = run_pipeline(
             retail_data=retail_data,
             pricing_config=pricing_config,
             logistics_data=logistics_data,
             use_llm=use_llm,
         )
+        
+        # 2. Send output of all AIs to RAG and get synthesized verdict
+        rag_verdict = result.get("report_md") or result.get("report_markdown", "")
+        if rag_agent_instance is not None:
+            try:
+                rag_agent_instance.ingest_pipeline_results(result)
+                rag_verdict = rag_agent_instance.synthesize_analysis_verdict(result)
+            except Exception as e:
+                print(f"RAG ingestion / synthesis warning: {e}")
+                
         return {
             "success": True,
             "run_id": result["run_id"],
@@ -196,7 +296,8 @@ def analyze_json(req: AnalyzeRequest):
             "meta": result["meta"],
             "stores": result["stores"],
             "logistics_global": result["logistics_global"],
-            "report_markdown": result["report_md"],
+            "report_markdown": result.get("report_md") or result.get("report_markdown", ""),
+            "rag_result": rag_verdict,
             "files": result["files"],
         }
     except Exception as exc:
@@ -208,30 +309,48 @@ def analyze_json(req: AnalyzeRequest):
 
 @app.post("/api/analyze/upload")
 async def analyze_upload(
-    retail_data_file: UploadFile = File(..., description="Upload retail_data.json"),
+    retail_data_file: UploadFile = File(..., description="Upload retail_data.json, CSV, or text document for all AIs"),
     pricing_config_file: UploadFile = File(None, description="Optional: upload pricing_config.json"),
     logistics_data_file: UploadFile = File(None, description="Optional: upload logistics_data.json"),
 ):
     """
-    Upload retail data as a .json file and run the full pipeline.
-
-    Only retail_data_file is required. The others use built-in defaults if not provided.
+    Upload retail data (JSON or CSV) to run through all AIs, send output to RAG, and return the result.
     """
-    # Parse retail data file
     try:
         content = await retail_data_file.read()
-        retail_data = json.loads(content.decode("utf-8"))
-    except json.JSONDecodeError:
-        raise HTTPException(status_code=400, detail="Invalid JSON in retail_data_file")
+        file_text = content.decode("utf-8", errors="replace")
     except Exception as exc:
-        raise HTTPException(status_code=400, detail=f"Error reading retail_data_file: {str(exc)}")
+        raise HTTPException(status_code=400, detail=f"Error reading file: {str(exc)}")
+
+    # Try to parse as retail_data JSON or CSV
+    retail_data = parse_input_to_retail_data(file_text)
+
+    if not retail_data:
+        # Fallback: Ingest as a general document into RAG
+        if rag_agent_instance is None:
+            raise HTTPException(status_code=503, detail="RAG Agent is not initialized, cannot ingest arbitrary documents.")
+        try:
+            doc = Document(
+                page_content=file_text, 
+                metadata={"source": retail_data_file.filename}
+            )
+            rag_agent_instance.ingest_documents([doc])
+            summary = rag_agent_instance.ask(f"Summarize the key information, data points, and operational insights in '{retail_data_file.filename}'.")
+            return {
+                "success": True,
+                "run_id": "ingest_only",
+                "report_markdown": summary,
+                "rag_result": summary,
+            }
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=f"Failed to ingest document into RAG: {str(e)}")
 
     # Parse optional pricing config
     pricing_config = None
     if pricing_config_file is not None:
         try:
-            content = await pricing_config_file.read()
-            pricing_config = json.loads(content.decode("utf-8"))
+            p_content = await pricing_config_file.read()
+            pricing_config = json.loads(p_content.decode("utf-8", errors="replace"))
         except json.JSONDecodeError:
             raise HTTPException(status_code=400, detail="Invalid JSON in pricing_config_file")
 
@@ -239,19 +358,29 @@ async def analyze_upload(
     logistics_data = None
     if logistics_data_file is not None:
         try:
-            content = await logistics_data_file.read()
-            logistics_data = json.loads(content.decode("utf-8"))
+            l_content = await logistics_data_file.read()
+            logistics_data = json.loads(l_content.decode("utf-8", errors="replace"))
         except json.JSONDecodeError:
             raise HTTPException(status_code=400, detail="Invalid JSON in logistics_data_file")
 
-    # Run pipeline
+    # 1. Run pipeline across all AIs
     try:
         result = run_pipeline(
             retail_data=retail_data,
             pricing_config=pricing_config,
             logistics_data=logistics_data,
-            use_llm=False,  # file upload mode defaults to offline
+            use_llm=False,
         )
+        
+        # 2. Ingest all AI outputs into RAG and get synthesized verdict
+        rag_verdict = result.get("report_md") or result.get("report_markdown", "")
+        if rag_agent_instance is not None:
+            try:
+                rag_agent_instance.ingest_pipeline_results(result)
+                rag_verdict = rag_agent_instance.synthesize_analysis_verdict(result)
+            except Exception as e:
+                print(f"RAG ingestion / synthesis warning: {e}")
+
         return {
             "success": True,
             "run_id": result["run_id"],
@@ -259,7 +388,8 @@ async def analyze_upload(
             "meta": result["meta"],
             "stores": result["stores"],
             "logistics_global": result["logistics_global"],
-            "report_markdown": result["report_md"],
+            "report_markdown": result.get("report_md") or result.get("report_markdown", ""),
+            "rag_result": rag_verdict,
             "files": result["files"],
         }
     except Exception as exc:
@@ -312,6 +442,9 @@ def get_result(run_id: str):
     if md_file.exists():
         result["report_markdown"] = md_file.read_text(encoding="utf-8")
 
+    if "logistics_global" not in result and "logistics" in result:
+        result["logistics_global"] = result["logistics"]
+
     return result
 
 
@@ -347,6 +480,60 @@ def download_result(run_id: str, format: str = "md"):
         media_type=media_type,
         filename=file_path.name,
     )
+
+
+class ChatRequest(BaseModel):
+    message: str
+
+
+@app.post("/api/chat")
+def chat_with_boss(req: ChatRequest):
+    """
+    Chat with the Boss AI (RAG Model).
+    If the user provides retail data (JSON or CSV) in the chat prompt,
+    it automatically routes the data to all AIs, sends the output to RAG,
+    and returns the RAG synthesized result along with full analysis data.
+    """
+    if rag_agent_instance is None:
+        raise HTTPException(status_code=503, detail="RAG Agent is not initialized or not available.")
+    
+    # 1. Check if the message contains user-given retail data
+    parsed_retail = parse_input_to_retail_data(req.message)
+    if parsed_retail:
+        try:
+            # Send user-given data to all AIs
+            pipeline_result = run_pipeline(retail_data=parsed_retail)
+            
+            # Send outputs to RAG
+            rag_agent_instance.ingest_pipeline_results(pipeline_result)
+            
+            # RAG generates the synthesized result
+            rag_verdict = rag_agent_instance.synthesize_analysis_verdict(pipeline_result)
+            
+            return {
+                "answer": rag_verdict,
+                "is_analysis": True,
+                "analysis_data": {
+                    "success": True,
+                    "run_id": pipeline_result["run_id"],
+                    "timestamp": pipeline_result["timestamp"],
+                    "meta": pipeline_result["meta"],
+                    "stores": pipeline_result["stores"],
+                    "logistics_global": pipeline_result["logistics_global"],
+                    "report_markdown": pipeline_result.get("report_md") or pipeline_result.get("report_markdown", ""),
+                    "rag_result": rag_verdict,
+                }
+            }
+        except Exception as e:
+            print(f"Chat data analysis fallback: {e}")
+            # If pipeline fails on custom input, proceed to ask RAG directly
+
+    # 2. General query to RAG
+    try:
+        answer = rag_agent_instance.ask(req.message)
+        return {"answer": answer, "is_analysis": False}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 # ---------------------------------------------------------------------------

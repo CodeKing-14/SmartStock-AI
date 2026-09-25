@@ -8,12 +8,19 @@ import {
   User,
   Upload,
   FileText,
-  X
+  X,
+  Tag,
+  BarChart3,
+  Boxes,
+  Truck,
+  ArrowRight,
+  TrendingUp,
+  AlertTriangle
 } from 'lucide-react';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 
-export default function BossAiPage({ onTriggerToast }) {
+export default function BossAiPage({ onTriggerToast, setAnalysisData, analysisData, onNavigateToPage }) {
 
 
   const handleDownloadPDF = async () => {
@@ -51,7 +58,8 @@ export default function BossAiPage({ onTriggerToast }) {
       setAttachedFile({
         name: file.name,
         isImage,
-        url: fileUrl
+        url: fileUrl,
+        rawFile: file
       });
     }
   };
@@ -63,7 +71,7 @@ export default function BossAiPage({ onTriggerToast }) {
     }
   };
 
-  const handleSendMessage = (e) => {
+  const handleSendMessage = async (e) => {
     e.preventDefault();
     if (!chatInput.trim() && !attachedFile) return;
 
@@ -73,37 +81,97 @@ export default function BossAiPage({ onTriggerToast }) {
       attachment: attachedFile
     }];
     setChatMessages(newMessages);
+    
+    const fileToSend = attachedFile ? attachedFile.rawFile : null;
+    const currentInput = chatInput;
+    
     setChatInput('');
     setAttachedFile(null);
     if (fileInputRef.current) fileInputRef.current.value = '';
 
-    setTimeout(() => {
-      let reply = "Based on the combined data from Data, Pricing, Inventory, and Logistics AIs, the consensus is clear: shifting the inventory is the optimal move.";
-      const lowerInput = chatInput.toLowerCase();
-      
-      if (lowerInput.includes('why') || lowerInput.includes('reason')) {
-        reply = "Warehouse B has a +160% demand spike and will run out in 2 days. Warehouse A has 500 packets (excess). Moving 150 packets ensures we meet demand and capture a $120/packet margin.";
-      } else if (lowerInput.includes('cost') || lowerInput.includes('freight') || lowerInput.includes('logistics')) {
-        reply = "The Logistics AI confirmed Van #4 is available. It costs $75 and takes 2 hours. This is negligible compared to the $18,000 potential loss if we do nothing.";
-      } else if (lowerInput.includes('pricing') || lowerInput.includes('margin') || lowerInput.includes('profit')) {
-        reply = "Pricing AI confirmed a locked price of $120 per packet. Since competitors are sold out, we maintain a 45% profit margin ($54 profit per packet).";
-      } else if (lowerInput.includes('inventory') || lowerInput.includes('stock')) {
-        reply = "Inventory AI audited our levels: Warehouse A has 500 units (60 days supply), while B has only 20 units. Shifting 150 units balances our network without risking A's fulfillment.";
-      } else if (lowerInput.includes('data') || lowerInput.includes('demand') || lowerInput.includes('trend')) {
-        reply = "Data Analyst AI detected a +160% demand spike in Warehouse B's territory due to a local trend. We must act now to capture this demand before competitors restock.";
-      } else if (lowerInput.includes('pdf')) {
-        reply = "You can download this entire analysis as a PDF using the 'Download PDF' button at the top of the page!";
-      } else if (lowerInput.includes('hello') || lowerInput.includes('hi')) {
-        reply = "Hello! I'm here to explain the final decision. What would you like to know about the strategy?";
-      }
+    if (fileToSend) {
+      // Add a loading message
+      setChatMessages(prev => [...prev, { sender: 'boss', text: '⚡ Running data through all AI agents (Data Analyst, Pricing, Inventory, Spoilage, Basket, Game Theory, Logistics) and sending outputs to RAG...' }]);
 
-      if (attachedFile) {
-        reply += ` (I've also received your attached file: ${attachedFile.name}. My visual analysis confirms the previous assessments.)`;
-      }
+      try {
+        const formData = new FormData();
+        // The backend expects 'retail_data_file' as the form field name
+        formData.append('retail_data_file', fileToSend);
+        
+        const response = await fetch('http://localhost:8000/api/analyze/upload', {
+          method: 'POST',
+          body: formData,
+        });
 
-      setChatMessages(prev => [...prev, { sender: 'boss', text: reply }]);
-    }, 1000);
+        const data = await response.json();
+
+        if (response.ok) {
+          if (setAnalysisData) setAnalysisData(data);
+          const verdictText = data.rag_result || data.report_markdown;
+          setChatMessages(prev => {
+            const msgs = [...prev];
+            msgs[msgs.length - 1] = { 
+              sender: 'boss', 
+              text: `🎯 RAG & Boss AI Analysis Complete (Run ID: ${data.run_id})\n\n${verdictText}` 
+            };
+            return msgs;
+          });
+          if (onTriggerToast) onTriggerToast('Data processed by all AIs and synthesized by RAG!');
+        } else {
+          setChatMessages(prev => {
+            const msgs = [...prev];
+            msgs[msgs.length - 1] = { sender: 'boss', text: `Backend Error: ${data.detail || 'Unknown error'}` };
+            return msgs;
+          });
+        }
+      } catch (error) {
+        setChatMessages(prev => {
+            const msgs = [...prev];
+            msgs[msgs.length - 1] = { sender: 'boss', text: `Connection Error: Could not reach the backend at http://localhost:8000. Is it running? (${error.message})` };
+            return msgs;
+        });
+      }
+    } else {
+      // If user typed, send to chat (which also processes direct retail data through all AIs + RAG)
+      setChatMessages(prev => [...prev, { sender: 'boss', text: 'Thinking and analyzing across all AI agents...' }]);
+      try {
+        const response = await fetch('http://localhost:8000/api/chat', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ message: currentInput }),
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          if (data.is_analysis && data.analysis_data && setAnalysisData) {
+            setAnalysisData(data.analysis_data);
+            if (onTriggerToast) onTriggerToast('Retail data processed by all AIs and synthesized by RAG!');
+          }
+          setChatMessages(prev => {
+            const msgs = [...prev];
+            msgs[msgs.length - 1] = { sender: 'boss', text: data.answer };
+            return msgs;
+          });
+        } else {
+          const errorData = await response.json();
+          setChatMessages(prev => {
+            const msgs = [...prev];
+            msgs[msgs.length - 1] = { sender: 'boss', text: `Error: ${errorData.detail || 'Could not get response'}` };
+            return msgs;
+          });
+        }
+      } catch (error) {
+        setChatMessages(prev => {
+          const msgs = [...prev];
+          msgs[msgs.length - 1] = { sender: 'boss', text: `Connection Error: ${error.message}` };
+          return msgs;
+        });
+      }
+    }
   };
+
 
 
 
@@ -126,10 +194,12 @@ export default function BossAiPage({ onTriggerToast }) {
               <span>THE BOSS AI • EXECUTIVE COMMAND CENTER</span>
             </div>
             <h1 style={{ fontSize: '24px', fontWeight: 800, color: 'white', margin: '0 0 6px 0', letterSpacing: '-0.02em' }}>
-              Final Coordinated Decision
+              Final Coordinated Decision — {analysisData?.meta?.chain_name || 'Retail Network'}
             </h1>
             <p style={{ fontSize: '13.5px', color: '#c7d2fe', maxWidth: '680px', lineHeight: 1.5, margin: 0 }}>
-              The Boss AI reviews reports from all 4 specialized AIs and produces one clear operational decision: Shift 150 packets from Warehouse A to Warehouse B.
+              {analysisData?.run_id 
+                ? `Run ID: ${analysisData.run_id} • Synthesizing verified findings from Data Analyst AI, Pricing AI, Inventory AI, Spoilage AI, Basket AI, Game Theory AI, and Logistics AI.`
+                : 'The Boss AI reviews reports from all specialized AIs, arbitrates cross-agent conflicts, and produces one coordinated operational decision.'}
             </p>
           </div>
 
@@ -173,11 +243,209 @@ export default function BossAiPage({ onTriggerToast }) {
                 <CheckCircle2 size={17} />
                 <span>APPROVED BY BOSS AI</span>
               </div>
-              <div style={{ fontSize: '11px', color: '#e0e7ff', marginTop: '2px' }}>4 of 4 AIs Voting YES</div>
+              <div style={{ fontSize: '11px', color: '#e0e7ff', marginTop: '2px' }}>All AI Agents Synchronized</div>
             </div>
           </div>
         </div>
       </div>
+
+      {/* Executive Overview KPI Strip */}
+      {analysisData?.stores && (
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '14px' }}>
+          <div 
+            onClick={() => onNavigateToPage && onNavigateToPage('data-ai')}
+            style={{ background: 'white', padding: '16px', borderRadius: '12px', border: '1px solid #e2e8f0', cursor: 'pointer', transition: 'transform 0.15s, box-shadow 0.15s' }}
+            onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-2px)'}
+            onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <span style={{ fontSize: '12px', color: '#64748b', fontWeight: 600 }}>1. Data Analyst AI</span>
+              <BarChart3 size={16} color="#2563eb" />
+            </div>
+            <div style={{ fontSize: '22px', fontWeight: 800, color: '#1e3a8a', marginTop: '4px' }}>
+              {Object.keys(analysisData.stores).length} Stores Audited
+            </div>
+            <div style={{ fontSize: '11px', color: '#2563eb', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px', marginTop: '4px' }}>
+              <span>View Data Analyst Report</span>
+              <ArrowRight size={12} />
+            </div>
+          </div>
+
+          <div 
+            onClick={() => onNavigateToPage && onNavigateToPage('pricing-ai')}
+            style={{ background: 'white', padding: '16px', borderRadius: '12px', border: '1px solid #e2e8f0', cursor: 'pointer', transition: 'transform 0.15s, box-shadow 0.15s' }}
+            onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-2px)'}
+            onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <span style={{ fontSize: '12px', color: '#64748b', fontWeight: 600 }}>2. Pricing AI</span>
+              <Tag size={16} color="#059669" />
+            </div>
+            <div style={{ fontSize: '22px', fontWeight: 800, color: '#059669', marginTop: '4px' }}>
+              Elasticity Optimized
+            </div>
+            <div style={{ fontSize: '11px', color: '#059669', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px', marginTop: '4px' }}>
+              <span>View Pricing Actions</span>
+              <ArrowRight size={12} />
+            </div>
+          </div>
+
+          <div 
+            onClick={() => onNavigateToPage && onNavigateToPage('inventory-ai')}
+            style={{ background: 'white', padding: '16px', borderRadius: '12px', border: '1px solid #e2e8f0', cursor: 'pointer', transition: 'transform 0.15s, box-shadow 0.15s' }}
+            onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-2px)'}
+            onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <span style={{ fontSize: '12px', color: '#64748b', fontWeight: 600 }}>3. Inventory AI</span>
+              <Boxes size={16} color="#d97706" />
+            </div>
+            <div style={{ fontSize: '22px', fontWeight: 800, color: '#d97706', marginTop: '4px' }}>
+              Audited & Protected
+            </div>
+            <div style={{ fontSize: '11px', color: '#d97706', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px', marginTop: '4px' }}>
+              <span>View Stock & Risks</span>
+              <ArrowRight size={12} />
+            </div>
+          </div>
+
+          <div 
+            onClick={() => onNavigateToPage && onNavigateToPage('logistics-ai')}
+            style={{ background: 'white', padding: '16px', borderRadius: '12px', border: '1px solid #e2e8f0', cursor: 'pointer', transition: 'transform 0.15s, box-shadow 0.15s' }}
+            onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-2px)'}
+            onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <span style={{ fontSize: '12px', color: '#64748b', fontWeight: 600 }}>4. Logistics AI</span>
+              <Truck size={16} color="#7c3aed" />
+            </div>
+            <div style={{ fontSize: '22px', fontWeight: 800, color: '#7c3aed', marginTop: '4px' }}>
+              {(analysisData.logistics_global?.transfers || analysisData.logistics?.transfers || []).length} Transfers
+            </div>
+            <div style={{ fontSize: '11px', color: '#7c3aed', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px', marginTop: '4px' }}>
+              <span>View Routes & ROI</span>
+              <ArrowRight size={12} />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Coordinated Decision Matrix by Store */}
+      {analysisData?.stores && (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <h3 style={{ fontSize: '18px', fontWeight: 800, color: '#1e293b', margin: 0 }}>
+              🏢 Coordinated Store Decisions (Approved by Boss AI)
+            </h3>
+            <span style={{ fontSize: '12px', color: '#64748b' }}>
+              Click any agent button to inspect specific models
+            </span>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(360px, 1fr))', gap: '16px' }}>
+            {Object.keys(analysisData.stores).map((storeId) => {
+              const s = analysisData.stores[storeId];
+              const storeInfo = s.store || {};
+              const pricing = s.pricing || {};
+              const inventory = s.inventory || {};
+              const negotiations = s.negotiation_history || [];
+
+              // Count actions
+              let priceChanges = 0;
+              let stockFlags = 0;
+              Object.values(pricing).forEach(p => { if (p.action !== 'hold') priceChanges++; });
+              Object.values(inventory).forEach(inv => { if (inv.flag) stockFlags++; });
+
+              return (
+                <div key={storeId} style={{
+                  background: 'white',
+                  borderRadius: '14px',
+                  border: '1.5px solid #e2e8f0',
+                  padding: '20px',
+                  boxShadow: 'var(--shadow-xs)',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '12px'
+                }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                    <div>
+                      <h4 style={{ margin: 0, fontSize: '17px', fontWeight: 800, color: '#0f172a' }}>
+                        {storeInfo.store_name} ({storeInfo.store_id})
+                      </h4>
+                      <div style={{ fontSize: '12px', color: '#64748b', marginTop: '2px' }}>
+                        {storeInfo.products?.length || 0} Products Managed
+                      </div>
+                    </div>
+                    {storeInfo.festival_in_3_days && (
+                      <span style={{ fontSize: '11px', background: '#ecfdf5', color: '#047857', border: '1px solid #a7f3d0', padding: '2px 8px', borderRadius: '12px', fontWeight: 700 }}>
+                        🎉 Festival In 3 Days
+                      </span>
+                    )}
+                  </div>
+
+                  {negotiations.length > 0 && (
+                    <div style={{ background: '#f5f3ff', border: '1px solid #ddd6fe', borderRadius: '8px', padding: '8px 12px' }}>
+                      <div style={{ fontSize: '11px', fontWeight: 700, color: '#5b21b6' }}>Boss AI Intervention:</div>
+                      {negotiations.map((n, i) => (
+                        <div key={i} style={{ fontSize: '11.5px', color: '#4c1d95', marginTop: '2px' }}>
+                          • {n.reason}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
+                    <div style={{ background: '#f8fafc', padding: '10px', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
+                      <div style={{ fontSize: '11px', color: '#64748b', fontWeight: 600 }}>Pricing Decisions</div>
+                      <div style={{ fontSize: '14px', fontWeight: 700, color: '#059669', marginTop: '2px' }}>
+                        {priceChanges} Adjusted • {Object.keys(pricing).length - priceChanges} Held
+                      </div>
+                    </div>
+                    <div style={{ background: '#f8fafc', padding: '10px', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
+                      <div style={{ fontSize: '11px', color: '#64748b', fontWeight: 600 }}>Risk Alerts</div>
+                      <div style={{ fontSize: '14px', fontWeight: 700, color: stockFlags > 0 ? '#dc2626' : '#059669', marginTop: '2px' }}>
+                        {stockFlags > 0 ? `⚠️ ${stockFlags} Flagged` : '✅ All Stock Safe'}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Navigation Jump Buttons */}
+                  <div style={{ display: 'flex', gap: '8px', marginTop: 'auto', paddingTop: '8px' }}>
+                    <button
+                      type="button"
+                      onClick={() => onNavigateToPage && onNavigateToPage('data-ai')}
+                      style={{ flex: 1, padding: '6px', fontSize: '11.5px', fontWeight: 600, background: '#eff6ff', color: '#1d4ed8', border: '1px solid #bfdbfe', borderRadius: '6px', cursor: 'pointer' }}
+                    >
+                      Analyst
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => onNavigateToPage && onNavigateToPage('pricing-ai')}
+                      style={{ flex: 1, padding: '6px', fontSize: '11.5px', fontWeight: 600, background: '#ecfdf5', color: '#047857', border: '1px solid #a7f3d0', borderRadius: '6px', cursor: 'pointer' }}
+                    >
+                      Pricing
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => onNavigateToPage && onNavigateToPage('inventory-ai')}
+                      style={{ flex: 1, padding: '6px', fontSize: '11.5px', fontWeight: 600, background: '#fffbeb', color: '#b45309', border: '1px solid #fde68a', borderRadius: '6px', cursor: 'pointer' }}
+                    >
+                      Inventory
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => onNavigateToPage && onNavigateToPage('logistics-ai')}
+                      style={{ flex: 1, padding: '6px', fontSize: '11.5px', fontWeight: 600, background: '#f5f3ff', color: '#6d28d9', border: '1px solid #ddd6fe', borderRadius: '6px', cursor: 'pointer' }}
+                    >
+                      Logistics
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
 
 
 
@@ -243,17 +511,38 @@ export default function BossAiPage({ onTriggerToast }) {
                 <Upload size={22} color="#4f46e5" />
               </div>
               <h4 style={{ margin: '0 0 4px 0', fontSize: '15px', fontWeight: 600, color: 'var(--text-primary)' }}>
-                Upload CSV, Excel, PDF, or other business data files
+                Upload JSON, CSV, or Business Data File
               </h4>
-              <p style={{ margin: 0, fontSize: '12.5px', color: 'var(--text-muted)' }}>
-                Let Boss AI analyze the uploaded file along with the results from the 4 AI agents.
+              <p style={{ margin: '0 0 16px 0', fontSize: '12.5px', color: 'var(--text-muted)' }}>
+                The user data will be dispatched across all AI agents and synthesized into RAG for an executive verdict.
               </p>
+              <div style={{ display: 'flex', gap: '10px' }}>
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    fileInputRef.current?.click();
+                  }}
+                  style={{
+                    background: '#4f46e5',
+                    color: 'white',
+                    border: 'none',
+                    padding: '8px 16px',
+                    borderRadius: 'var(--radius-md)',
+                    fontSize: '12.5px',
+                    fontWeight: 600,
+                    cursor: 'pointer'
+                  }}
+                >
+                  Choose File (.json, .csv)
+                </button>
+              </div>
               <input 
                 type="file" 
                 ref={fileInputRef} 
                 style={{ display: 'none' }} 
                 onChange={handleFileChange}
-                accept="image/*,.pdf,.csv,.xlsx,.doc,.docx"
+                accept=".json,.csv,.txt,image/*,.pdf,.xlsx,.doc,.docx"
               />
             </div>
           )}
@@ -278,13 +567,14 @@ export default function BossAiPage({ onTriggerToast }) {
               <div style={{
                 background: msg.sender === 'user' ? 'white' : '#eff6ff',
                 border: `1px solid ${msg.sender === 'user' ? '#e2e8f0' : '#bfdbfe'}`,
-                padding: '12px 16px',
+                padding: '14px 18px',
                 borderRadius: '16px',
                 borderTopRightRadius: msg.sender === 'user' ? '4px' : '16px',
                 borderTopLeftRadius: msg.sender === 'boss' ? '4px' : '16px',
-                maxWidth: '75%',
-                fontSize: '14px',
-                lineHeight: 1.5,
+                maxWidth: '82%',
+                fontSize: '13.5px',
+                lineHeight: 1.6,
+                whiteSpace: 'pre-wrap',
                 color: 'var(--text-primary)',
                 boxShadow: '0 1px 2px rgba(0,0,0,0.05)'
               }}>
@@ -325,12 +615,34 @@ export default function BossAiPage({ onTriggerToast }) {
                </button>
             </div>
           )}
-          <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+          <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              title="Attach JSON, CSV, or document"
+              style={{
+                background: '#f8fafc',
+                border: '1px solid #cbd5e1',
+                borderRadius: 'var(--radius-md)',
+                padding: '0 12px',
+                height: '43px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                cursor: 'pointer',
+                color: '#475569',
+                transition: 'all 0.2s'
+              }}
+              onMouseEnter={(e) => e.currentTarget.style.background = '#e2e8f0'}
+              onMouseLeave={(e) => e.currentTarget.style.background = '#f8fafc'}
+            >
+              <Upload size={18} />
+            </button>
             <input
               type="text"
               value={chatInput}
               onChange={(e) => setChatInput(e.target.value)}
-              placeholder="Ask Boss AI about costs, margins, inventory..."
+              placeholder="Ask Boss AI or paste store data JSON/CSV..."
               style={{
                 flex: 1,
                 padding: '12px 16px',

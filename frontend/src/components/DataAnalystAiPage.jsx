@@ -1,24 +1,31 @@
 import React from 'react';
-import { 
-  BarChart3, 
-  TrendingUp, 
-  ArrowLeft, 
-  ArrowRight, 
-  Users, 
-  Clock, 
-  CheckCircle2 
+import {
+  BarChart3,
+  ArrowLeft,
+  ArrowRight,
+  TrendingUp,
+  AlertCircle
 } from 'lucide-react';
 
-export default function DataAnalystAiPage({ onBackToBoss, onNavigateToPage }) {
-  const dailyData = [
-    { day: 'Mon', warehouseB: 12, warehouseA: 4 },
-    { day: 'Tue', warehouseB: 18, warehouseA: 5 },
-    { day: 'Wed', warehouseB: 24, warehouseA: 4 },
-    { day: 'Thu', warehouseB: 35, warehouseA: 6 },
-    { day: 'Fri (Today)', warehouseB: 48, warehouseA: 5 },
-    { day: 'Sat (Proj)', warehouseB: 62, warehouseA: 4 },
-    { day: 'Sun (Proj)', warehouseB: 70, warehouseA: 5 },
-  ];
+export default function DataAnalystAiPage({ onBackToBoss, onNavigateToPage, analysisData }) {
+  const stores = analysisData?.stores || {};
+  const storeIds = Object.keys(stores);
+
+  if (!analysisData || storeIds.length === 0) {
+    return (
+      <div style={{ padding: '40px', textAlign: 'center', background: 'white', borderRadius: '8px' }}>
+        <BarChart3 size={48} color="#cbd5e1" style={{ marginBottom: '16px' }} />
+        <h3 style={{ margin: '0 0 8px 0', color: '#334155' }}>No Analysis Data</h3>
+        <p style={{ color: '#64748b' }}>Upload a file in the Boss AI page to view the Data Analyst AI report.</p>
+        <button
+          onClick={onBackToBoss}
+          style={{ marginTop: '20px', padding: '8px 16px', background: '#4f46e5', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
+        >
+          Go to Boss AI
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '22px' }}>
@@ -88,109 +95,59 @@ export default function DataAnalystAiPage({ onBackToBoss, onNavigateToPage }) {
         </div>
       </div>
 
-      {/* Key Finding Box */}
-      <div style={{
-        background: '#eff6ff',
-        border: '1.5px solid #bfdbfe',
-        borderRadius: 'var(--radius-lg)',
-        padding: '20px',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between'
-      }}>
-        <div style={{ display: 'flex', alignItems: 'flex-start', gap: '14px' }}>
-          <div style={{ background: '#3b82f6', color: 'white', padding: '8px', borderRadius: '8px', marginTop: '2px' }}>
-            <TrendingUp size={20} />
-          </div>
-          <div>
-            <div style={{ fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', color: '#1d4ed8' }}>
-              PRIMARY DATA FINDING
-            </div>
-            <div style={{ fontSize: '16px', fontWeight: 700, color: '#1e3a8a', marginTop: '2px' }}>
-              Warehouse B Territory Demand Surged +160%
-            </div>
-            <div style={{ fontSize: '13px', color: '#334155', marginTop: '4px', maxWidth: '750px' }}>
-              A major city festival and downtown electronics expo have triggered an unprecedented demand spike for UltraBass Headphones. Warehouse B has only <strong>20 packets</strong> remaining and will stock out within 48 hours without replenishment from Warehouse A.
-            </div>
-          </div>
-        </div>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+        {storeIds.map((storeId) => {
+          const storeData = stores[storeId].store;
+          const analystData = stores[storeId].analyst;
 
-        <div style={{ textAlign: 'right', minWidth: '160px' }}>
-          <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Warehouse B Runway</div>
-          <div style={{ fontSize: '24px', fontWeight: 800, color: '#dc2626', fontFamily: 'var(--font-heading)' }}>
-            1.8 Days
-          </div>
-          <div style={{ fontSize: '11px', color: '#dc2626', fontWeight: 600 }}>Imminent Stockout</div>
-        </div>
-      </div>
+          return (
+            <div key={storeId} className="dashboard-section-card" style={{ background: 'white', padding: '20px', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
+              <h3 style={{ fontSize: '18px', fontWeight: 700, color: '#1e293b', marginBottom: '16px' }}>
+                {storeData.store_name} ({storeData.store_id})
+              </h3>
 
-      {/* Side-by-side Warehouse Data Comparison */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
-        {/* Warehouse A Card */}
-        <div className="dashboard-section-card">
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px' }}>
-            <span style={{ fontSize: '11px', fontWeight: 700, color: '#1d4ed8', background: '#eff6ff', padding: '3px 8px', borderRadius: '6px' }}>
-              SUPPLY SOURCE
-            </span>
-            <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Steady Demand</span>
-          </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                {storeData.products.map((product) => {
+                  const productAnalyst = analystData[product.product_id];
+                  if (!productAnalyst) return null;
 
-          <h3 style={{ fontSize: '16px', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '10px' }}>
-            Warehouse A (Central Hub)
-          </h3>
-
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '13px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 12px', background: '#f8fafc', borderRadius: '8px' }}>
-              <span style={{ color: 'var(--text-secondary)' }}>Current Stock on Hand:</span>
-              <strong style={{ color: '#2563eb' }}>500 Packets (Abundant)</strong>
+                  return (
+                    <div key={product.product_id} style={{
+                      background: '#f8fafc',
+                      border: '1px solid #cbd5e1',
+                      borderRadius: '8px',
+                      padding: '16px',
+                      display: 'flex',
+                      alignItems: 'flex-start',
+                      gap: '16px'
+                    }}>
+                      <div style={{ background: '#e0e7ff', color: '#4338ca', padding: '10px', borderRadius: '8px' }}>
+                        <TrendingUp size={24} />
+                      </div>
+                      <div style={{ flex: 1 }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                          <h4 style={{ margin: 0, fontSize: '16px', fontWeight: 600, color: '#0f172a' }}>
+                            {product.name}
+                          </h4>
+                          <span style={{ fontSize: '12px', background: '#dcfce7', color: '#166534', padding: '2px 8px', borderRadius: '12px', fontWeight: 600 }}>
+                            Confidence: {Math.round(productAnalyst.confidence * 100)}%
+                          </span>
+                        </div>
+                        <p style={{ margin: 0, fontSize: '14px', color: '#334155', lineHeight: 1.5 }}>
+                          {productAnalyst.summary}
+                        </p>
+                        <div style={{ marginTop: '12px', fontSize: '12px', color: '#64748b', display: 'flex', gap: '16px' }}>
+                          <span><strong>Sources:</strong> {productAnalyst.data_sources?.join(', ')}</span>
+                          <span><strong>Hash:</strong> {productAnalyst.audit_trail?.data_hash.substring(0, 8)}...</span>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
             </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 12px', background: '#f8fafc', borderRadius: '8px' }}>
-              <span style={{ color: 'var(--text-secondary)' }}>Daily Sales Pace:</span>
-              <strong>5 Packets / day</strong>
-            </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 12px', background: '#f8fafc', borderRadius: '8px' }}>
-              <span style={{ color: 'var(--text-secondary)' }}>Inventory Buffer:</span>
-              <strong>60+ Days of Safe Stock</strong>
-            </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 12px', background: '#ecfdf5', borderRadius: '8px' }}>
-              <span style={{ color: '#047857', fontWeight: 600 }}>Packets Ready to Shift:</span>
-              <strong style={{ color: '#047857' }}>150 Packets immediately</strong>
-            </div>
-          </div>
-        </div>
-
-        {/* Warehouse B Card */}
-        <div className="dashboard-section-card">
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px' }}>
-            <span style={{ fontSize: '11px', fontWeight: 700, color: '#c2410c', background: '#fff7ed', padding: '3px 8px', borderRadius: '6px' }}>
-              DEMAND DESTINATION
-            </span>
-            <span style={{ fontSize: '12px', color: '#ea580c', fontWeight: 700 }}>+160% Spike</span>
-          </div>
-
-          <h3 style={{ fontSize: '16px', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '10px' }}>
-            Warehouse B (City Center)
-          </h3>
-
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '13px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 12px', background: '#fef2f2', borderRadius: '8px' }}>
-              <span style={{ color: '#991b1b', fontWeight: 600 }}>Current Stock on Hand:</span>
-              <strong style={{ color: '#dc2626' }}>20 Packets (Emergency)</strong>
-            </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 12px', background: '#f8fafc', borderRadius: '8px' }}>
-              <span style={{ color: 'var(--text-secondary)' }}>Daily Sales Pace:</span>
-              <strong style={{ color: '#ea580c' }}>48 Packets / day (Accelerating)</strong>
-            </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 12px', background: '#f8fafc', borderRadius: '8px' }}>
-              <span style={{ color: 'var(--text-secondary)' }}>Weekend Projected Demand:</span>
-              <strong>150 Packets</strong>
-            </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 12px', background: '#fef2f2', borderRadius: '8px' }}>
-              <span style={{ color: '#991b1b', fontWeight: 600 }}>Lost Revenue if not shifted:</span>
-              <strong style={{ color: '#991b1b' }}>-$18,000 Loss</strong>
-            </div>
-          </div>
-        </div>
+          );
+        })}
       </div>
 
       {/* Submission to Boss AI */}
@@ -205,10 +162,10 @@ export default function DataAnalystAiPage({ onBackToBoss, onNavigateToPage }) {
       }}>
         <div>
           <div style={{ fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', color: 'var(--text-muted)' }}>
-            Data Analyst AI Report to Boss AI:
+            Data Analyst AI Report Status:
           </div>
           <div style={{ fontSize: '14px', fontWeight: 700, color: 'var(--text-primary)', marginTop: '2px' }}>
-            “Confirming demand spike. Recommend shifting 150 packets from Warehouse A to Warehouse B.”
+            Data facts validated and sent to Boss AI and Pricing AI.
           </div>
         </div>
 

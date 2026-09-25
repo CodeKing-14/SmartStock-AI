@@ -1,22 +1,45 @@
 import React from 'react';
-import { 
-  Truck, 
-  MapPin, 
-  Clock, 
-  DollarSign, 
-  Navigation, 
-  ArrowLeft, 
-  ArrowRight, 
-  CheckCircle2 
+import {
+  Truck,
+  MapPin,
+  Clock,
+  DollarSign,
+  Navigation,
+  ArrowLeft,
+  ArrowRight,
+  TrendingUp,
+  CheckCircle2
 } from 'lucide-react';
 
-export default function LogisticsAiPage({ onBackToBoss }) {
-  const timeline = [
-    { time: '08:00 AM', title: 'Bay 2 Staging & Loading', desc: '150 packets loaded onto Express Cargo Van #4 at Warehouse A.' },
-    { time: '08:30 AM', title: 'Highway Transit', desc: 'Depart via Interstate 95 Express Corridor (45 miles).' },
-    { time: '10:30 AM', title: 'Arrival at Warehouse B', desc: 'Dock at City Receiving Bay 1 for rapid scan & unload.' },
-    { time: '11:00 AM', title: 'Shelf Stocked & Active', desc: 'All 150 packets active on POS for customer purchases.' },
-  ];
+export default function LogisticsAiPage({ onBackToBoss, onNavigateToPage, analysisData }) {
+  const logisticsData = analysisData?.logistics_global || analysisData?.logistics;
+  const transfers = logisticsData?.transfers || [];
+
+  if (!analysisData || !logisticsData) {
+    return (
+      <div style={{ padding: '40px', textAlign: 'center', background: 'white', borderRadius: '8px' }}>
+        <Truck size={48} color="#cbd5e1" style={{ marginBottom: '16px' }} />
+        <h3 style={{ margin: '0 0 8px 0', color: '#334155' }}>No Analysis Data</h3>
+        <p style={{ color: '#64748b' }}>Upload a file in the Boss AI page to view the Logistics AI report.</p>
+        <button
+          onClick={onBackToBoss}
+          style={{ marginTop: '20px', padding: '8px 16px', background: '#7c3aed', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
+        >
+          Go to Boss AI
+        </button>
+      </div>
+    );
+  }
+
+  // Get store/product names for better display
+  const getStoreName = (storeId) => analysisData.stores[storeId]?.store.store_name || storeId;
+  const getProductName = (sku) => {
+    for (const storeId in analysisData.stores) {
+      const p = analysisData.stores[storeId].store.products.find(p => p.product_id === sku);
+      if (p) return p.name;
+    }
+    return sku;
+  };
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '22px' }}>
@@ -86,129 +109,89 @@ export default function LogisticsAiPage({ onBackToBoss }) {
         </div>
       </div>
 
-      {/* Main Logistics Finding Callout */}
-      <div style={{
-        background: '#f5f3ff',
-        border: '1.5px solid #ddd6fe',
-        borderRadius: 'var(--radius-lg)',
-        padding: '20px',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between'
-      }}>
-        <div style={{ display: 'flex', alignItems: 'flex-start', gap: '14px' }}>
-          <div style={{ background: '#8b5cf6', color: 'white', padding: '8px', borderRadius: '8px', marginTop: '2px' }}>
-            <Navigation size={20} />
-          </div>
-          <div>
-            <div style={{ fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', color: '#6d28d9' }}>
-              DISPATCH READINESS VERIFIED
-            </div>
-            <div style={{ fontSize: '16px', fontWeight: 700, color: '#4c1d95', marginTop: '2px' }}>
-              Express Van #4 Assigned • 45 Miles Route • Freight: $75.00
-            </div>
-            <div style={{ fontSize: '13px', color: '#334155', marginTop: '4px', maxWidth: '750px' }}>
-              Route from Warehouse A to Warehouse B takes <strong>2 hours</strong>. Shifting 150 packets costs only $75 in freight while protecting <strong>$18,000 in customer sales</strong> (an ROI of 23,900%).
-            </div>
-          </div>
+      {transfers.length === 0 ? (
+        <div style={{ background: 'white', padding: '30px', textAlign: 'center', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
+          <CheckCircle2 size={48} color="#10b981" style={{ marginBottom: '12px' }} />
+          <h3 style={{ margin: '0 0 8px 0', color: '#1e293b' }}>Network is Balanced</h3>
+          <p style={{ color: '#64748b', margin: 0 }}>No profitable inventory transfers required at this time.</p>
         </div>
-
-        <div style={{ textAlign: 'right', minWidth: '170px' }}>
-          <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Freight Cost</div>
-          <div style={{ fontSize: '24px', fontWeight: 800, color: '#7c3aed', fontFamily: 'var(--font-heading)' }}>
-            $75.00
-          </div>
-          <div style={{ fontSize: '11px', color: '#6d28d9', fontWeight: 600 }}>2 Hours ETA</div>
-        </div>
-      </div>
-
-      {/* Route & Vehicle Specifications */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
-        {/* Vehicle & Carrier Card */}
-        <div className="dashboard-section-card">
-          <h3 style={{ fontSize: '15.5px', fontWeight: 700, marginBottom: '14px', color: 'var(--text-primary)' }}>
-            Carrier & Route Specifications
-          </h3>
-
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '13px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '9px 12px', background: '#f8fafc', borderRadius: '8px' }}>
-              <span style={{ color: 'var(--text-secondary)' }}>Assigned Vehicle:</span>
-              <strong>Express Cargo Van #4</strong>
+      ) : (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+          {/* Main Network Summary */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px' }}>
+            <div style={{ background: '#f5f3ff', padding: '16px', borderRadius: '12px', border: '1px solid #ddd6fe' }}>
+              <div style={{ fontSize: '12px', color: '#6d28d9', fontWeight: 600 }}>Total Transfers Planned</div>
+              <div style={{ fontSize: '24px', fontWeight: 800, color: '#4c1d95', margin: '4px 0' }}>{transfers.length}</div>
             </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '9px 12px', background: '#f8fafc', borderRadius: '8px' }}>
-              <span style={{ color: 'var(--text-secondary)' }}>Load Quantity:</span>
-              <strong style={{ color: '#6d28d9' }}>150 Packets</strong>
+            <div style={{ background: '#fef2f2', padding: '16px', borderRadius: '12px', border: '1px solid #fecaca' }}>
+              <div style={{ fontSize: '12px', color: '#b91c1c', fontWeight: 600 }}>Total Logistics Cost</div>
+              <div style={{ fontSize: '24px', fontWeight: 800, color: '#991b1b', margin: '4px 0' }}>₹{logisticsData.total_cost}</div>
             </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '9px 12px', background: '#f8fafc', borderRadius: '8px' }}>
-              <span style={{ color: 'var(--text-secondary)' }}>Distance:</span>
-              <strong>45.2 Miles via I-95</strong>
-            </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '9px 12px', background: '#f8fafc', borderRadius: '8px' }}>
-              <span style={{ color: 'var(--text-secondary)' }}>Driver:</span>
-              <strong style={{ color: '#047857' }}>David M. (Bay 2)</strong>
+            <div style={{ background: '#ecfdf5', padding: '16px', borderRadius: '12px', border: '1px solid #a7f3d0' }}>
+              <div style={{ fontSize: '12px', color: '#047857', fontWeight: 600 }}>Total Network ROI</div>
+              <div style={{ fontSize: '24px', fontWeight: 800, color: '#065f46', margin: '4px 0' }}>₹{logisticsData.total_roi}</div>
             </div>
           </div>
-        </div>
 
-        {/* Cost Breakdown Card */}
-        <div className="dashboard-section-card">
-          <h3 style={{ fontSize: '15.5px', fontWeight: 700, marginBottom: '14px', color: 'var(--text-primary)' }}>
-            Freight Cost Breakdown: $75 Total
-          </h3>
+          {/* Transfers List */}
+          <h3 style={{ fontSize: '18px', fontWeight: 700, color: '#1e293b', margin: '10px 0 0 0' }}>Recommended Transfers</h3>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '13px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-              <span style={{ color: 'var(--text-secondary)' }}>Driver Hourly Pay (2h):</span>
-              <strong>$40.00</strong>
-            </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-              <span style={{ color: 'var(--text-secondary)' }}>EV Fuel / Charging (45 miles):</span>
-              <strong>$25.00</strong>
-            </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-              <span style={{ color: 'var(--text-secondary)' }}>Express Tolls:</span>
-              <strong>$10.00</strong>
-            </div>
-            <div style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              paddingTop: '8px',
-              borderTop: '1px solid #e2e8f0',
-              marginTop: '4px'
-            }}>
-              <strong style={{ fontSize: '14.5px', color: 'var(--text-primary)' }}>Total Freight Cost:</strong>
-              <strong style={{ fontSize: '20px', color: '#7c3aed', fontFamily: 'var(--font-mono)' }}>$75.00</strong>
-            </div>
-            <div style={{ fontSize: '11px', color: 'var(--emerald-700)', fontWeight: 600, background: '#ecfdf5', padding: '6px 10px', borderRadius: '6px', textAlign: 'center', marginTop: '4px' }}>
-              Only $0.50 per packet to unlock $120.00 in revenue!
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Delivery Schedule Timeline */}
-      <div className="dashboard-section-card">
-        <h4 style={{ fontSize: '15px', fontWeight: 700, marginBottom: '14px', color: 'var(--text-primary)' }}>
-          Delivery Schedule Timeline
-        </h4>
-
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '14px' }}>
-          {timeline.map((step) => (
-            <div key={step.time} style={{ background: '#f8fafc', padding: '14px', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-subtle)' }}>
-              <div style={{ fontSize: '10.5px', fontWeight: 800, color: '#7c3aed', background: '#ede9fe', padding: '2px 8px', borderRadius: '10px', display: 'inline-block' }}>
-                {step.time}
+          {transfers.map((transfer, idx) => (
+            <div key={idx} className="dashboard-section-card" style={{ background: 'white', padding: '20px', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <div style={{ background: '#ede9fe', color: '#6d28d9', padding: '10px', borderRadius: '8px' }}>
+                    <Truck size={24} />
+                  </div>
+                  <div>
+                    <h4 style={{ margin: 0, fontSize: '16px', fontWeight: 600, color: '#0f172a' }}>
+                      {getProductName(transfer.sku)}
+                    </h4>
+                    <div style={{ fontSize: '13px', color: '#475569', fontWeight: 500, marginTop: '2px' }}>
+                      Shift {transfer.qty} units
+                    </div>
+                  </div>
+                </div>
+                <div style={{ textAlign: 'right' }}>
+                  <div style={{ fontSize: '12px', color: '#64748b', fontWeight: 600 }}>Distance</div>
+                  <div style={{ fontSize: '16px', fontWeight: 700, color: '#475569' }}>{transfer.distance_km} km</div>
+                </div>
               </div>
-              <div style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-primary)', marginTop: '8px' }}>
-                {step.title}
+
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: '#f8fafc', padding: '16px', borderRadius: '8px', border: '1px solid #cbd5e1' }}>
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontSize: '11px', color: '#64748b', fontWeight: 700, textTransform: 'uppercase' }}>From</div>
+                  <div style={{ fontSize: '14px', fontWeight: 600, color: '#0f172a' }}>{getStoreName(transfer.from_store)}</div>
+                </div>
+                <div style={{ padding: '0 20px', color: '#cbd5e1' }}>
+                  <ArrowRight size={24} />
+                </div>
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontSize: '11px', color: '#64748b', fontWeight: 700, textTransform: 'uppercase' }}>To</div>
+                  <div style={{ fontSize: '14px', fontWeight: 600, color: '#0f172a' }}>{getStoreName(transfer.to_store)}</div>
+                </div>
               </div>
-              <p style={{ fontSize: '11.5px', color: 'var(--text-secondary)', marginTop: '4px', lineHeight: 1.4, margin: '4px 0 0 0' }}>
-                {step.desc}
-              </p>
+
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px', marginTop: '16px' }}>
+                <div style={{ borderTop: '1px solid #e2e8f0', paddingTop: '12px' }}>
+                  <div style={{ fontSize: '12px', color: '#64748b' }}>Transfer Cost</div>
+                  <div style={{ fontSize: '15px', fontWeight: 600, color: '#dc2626' }}>₹{transfer.transfer_cost}</div>
+                </div>
+                <div style={{ borderTop: '1px solid #e2e8f0', paddingTop: '12px' }}>
+                  <div style={{ fontSize: '12px', color: '#64748b' }}>Profit Saved</div>
+                  <div style={{ fontSize: '15px', fontWeight: 600, color: '#059669' }}>₹{transfer.profit_saved}</div>
+                </div>
+                <div style={{ borderTop: '1px solid #e2e8f0', paddingTop: '12px' }}>
+                  <div style={{ fontSize: '12px', color: '#64748b' }}>ROI</div>
+                  <div style={{ fontSize: '15px', fontWeight: 600, color: '#2563eb', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    <TrendingUp size={16} /> {transfer.roi_percent}%
+                  </div>
+                </div>
+              </div>
             </div>
           ))}
         </div>
-      </div>
+      )}
 
       {/* Submission to Boss AI */}
       <div style={{
@@ -218,14 +201,15 @@ export default function LogisticsAiPage({ onBackToBoss }) {
         padding: '18px 24px',
         display: 'flex',
         alignItems: 'center',
-        justifyContent: 'space-between'
+        justifyContent: 'space-between',
+        marginTop: 'auto'
       }}>
         <div>
           <div style={{ fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', color: 'var(--text-muted)' }}>
-            Logistics AI Report to Boss AI:
+            Logistics AI Report Status:
           </div>
           <div style={{ fontSize: '14px', fontWeight: 700, color: 'var(--text-primary)', marginTop: '2px' }}>
-            “Van #4 is ready at Bay 2. Route is clear. Ready to dispatch upon Boss AI command.”
+            Routes computed and cost analyses sent to Boss AI.
           </div>
         </div>
 

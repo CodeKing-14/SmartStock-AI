@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Header from './components/Header';
 import Sidebar from './components/Sidebar';
 import BossAiPage from './components/BossAiPage';
@@ -18,6 +18,7 @@ import {
 function App() {
   const [activePage, setActivePage] = useState('boss-ai');
   const [toastMessage, setToastMessage] = useState(null);
+  const [analysisData, setAnalysisData] = useState(null);
 
   const showToast = (msg) => {
     setToastMessage(msg);
@@ -25,6 +26,55 @@ function App() {
       setToastMessage(null);
     }, 4500);
   };
+
+  const handleUpdateAnalysisData = (data) => {
+    if (!data) return;
+    // Normalize logistics data
+    if (!data.logistics_global && data.logistics) {
+      data.logistics_global = data.logistics;
+    }
+    setAnalysisData(data);
+    try {
+      localStorage.setItem('smartstock_analysis_data', JSON.stringify(data));
+    } catch (e) {
+      console.warn('Could not persist to localStorage:', e);
+    }
+  };
+
+  // Load latest analysis on startup
+  useEffect(() => {
+    // 1. Try localStorage
+    const saved = localStorage.getItem('smartstock_analysis_data');
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        if (parsed && parsed.stores) {
+          if (!parsed.logistics_global && parsed.logistics) {
+            parsed.logistics_global = parsed.logistics;
+          }
+          setAnalysisData(parsed);
+        }
+      } catch (e) {}
+    }
+
+    // 2. Fetch latest analysis result from backend
+    fetch('http://localhost:8000/api/results')
+      .then(res => res.json())
+      .then(data => {
+        if (data.results && data.results.length > 0) {
+          const latestRunId = data.results[0].run_id;
+          fetch(`http://localhost:8000/api/results/${latestRunId}`)
+            .then(r => r.json())
+            .then(result => {
+              if (result && result.stores) {
+                handleUpdateAnalysisData(result);
+              }
+            })
+            .catch(() => {});
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   const navTabs = [
     { id: 'boss-ai', label: 'The Boss AI (Final Verdict)', icon: Crown, color: '#4f46e5' },
@@ -40,6 +90,7 @@ function App() {
       <Sidebar 
         activePage={activePage} 
         setActivePage={setActivePage} 
+        analysisData={analysisData}
       />
 
       {/* Main Content Area */}
@@ -48,6 +99,7 @@ function App() {
         <Header 
           activePage={activePage}
           setActivePage={setActivePage}
+          analysisData={analysisData}
         />
 
         {/* Dashboard Content Container */}
@@ -100,6 +152,8 @@ function App() {
             <BossAiPage 
               onNavigateToPage={(pageId) => setActivePage(pageId)}
               onTriggerToast={showToast}
+              setAnalysisData={handleUpdateAnalysisData}
+              analysisData={analysisData}
             />
           )}
 
@@ -107,6 +161,7 @@ function App() {
             <DataAnalystAiPage 
               onBackToBoss={() => setActivePage('boss-ai')}
               onNavigateToPage={(pageId) => setActivePage(pageId)}
+              analysisData={analysisData}
             />
           )}
 
@@ -114,6 +169,7 @@ function App() {
             <PricingAiPage 
               onBackToBoss={() => setActivePage('boss-ai')}
               onNavigateToPage={(pageId) => setActivePage(pageId)}
+              analysisData={analysisData}
             />
           )}
 
@@ -121,12 +177,14 @@ function App() {
             <InventoryAiPage 
               onBackToBoss={() => setActivePage('boss-ai')}
               onNavigateToPage={(pageId) => setActivePage(pageId)}
+              analysisData={analysisData}
             />
           )}
 
           {activePage === 'logistics-ai' && (
             <LogisticsAiPage 
               onBackToBoss={() => setActivePage('boss-ai')}
+              analysisData={analysisData}
             />
           )}
         </div>

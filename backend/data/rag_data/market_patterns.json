@@ -1,0 +1,64 @@
+{
+  "patterns": [
+    {
+      "id": "P001",
+      "pattern": "Festival weeks increase category demand by approximately 40% versus a normal week",
+      "confidence": "high",
+      "sample_size": "12 festival periods observed"
+    },
+    {
+      "id": "P002",
+      "pattern": "Competitors typically respond to a price cut within 12 hours during active sale periods, but within 3-5 days otherwise",
+      "confidence": "medium",
+      "sample_size": "20 observed competitor reactions"
+    },
+    {
+      "id": "P003",
+      "pattern": "Price elasticity for this category averages -1.2, meaning a 1% price cut drives roughly 1.2% volume increase",
+      "confidence": "high",
+      "sample_size": "estimated from 18 months of price/volume data"
+    },
+    {
+      "id": "P004",
+      "pattern": "Bundling increases unit volume by approximately 25% compared to an equivalent standalone discount",
+      "confidence": "medium",
+      "sample_size": "8 bundle campaigns"
+    },
+    {
+      "id": "P005",
+      "pattern": "Premium-tier SKUs show much lower elasticity (-0.4) than mid-tier SKUs (-1.5); price cuts move less volume for premium items",
+      "confidence": "high",
+      "sample_size": "24 months of SKU-level data"
+    },
+    {
+      "id": "P006",
+      "pattern": "Overstock situations that are not addressed within 30 days tend to require deeper eventual discounts to clear",
+      "confidence": "medium",
+      "sample_size": "15 historical overstock cases"
+    },
+    {
+      "id": "P007",
+      "pattern": "New product launches see 60-70% higher volume response to promotional pricing than mature products",
+      "confidence": "medium",
+      "sample_size": "6 launch campaigns"
+    },
+    {
+      "id": "P008",
+      "pattern": "Post-festival demand typically drops 15-20% below pre-festival baseline for about 2 weeks",
+      "confidence": "medium",
+      "sample_size": "10 post-festival periods"
+    },
+    {
+      "id": "P009",
+      "pattern": "Stores within the same city cluster show correlated demand; a stockout signal at one store often precedes one at nearby stores within 5-7 days",
+      "confidence": "medium",
+      "sample_size": "network data across 30 stores"
+    },
+    {
+      "id": "P010",
+      "pattern": "Holding price when a new low-price competitor enters tends to outperform matching, if the incumbent has a service or reliability advantage",
+      "confidence": "low",
+      "sample_size": "4 observed market entries"
+    }
+  ]
+}
