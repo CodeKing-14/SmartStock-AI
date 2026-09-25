@@ -1,0 +1,634 @@
+{
+  "meta": {
+    "chain_name": "FreshMart Retail",
+    "currency": "INR",
+    "week_label": "Week 39 vs Week 38"
+  },
+  "timestamp": "2026-09-25 10:23:11",
+  "run_id": "20260925_102311",
+  "stores": {
+    "S1": {
+      "store": {
+        "store_id": "S1",
+        "store_name": "Coimbatore Central",
+        "festival_in_3_days": true,
+        "festival_name": "Regional Harvest Festival",
+        "products": [
+          {
+            "product_id": "P1",
+            "name": "Basmati Rice 5kg",
+            "our_price": 620,
+            "sales_last_week": 120,
+            "sales_this_week": 150,
+            "stock_level": 90,
+            "competitor_price": 590
+          },
+          {
+            "product_id": "P2",
+            "name": "Sunflower Oil 1L",
+            "our_price": 165,
+            "sales_last_week": 200,
+            "sales_this_week": 190,
+            "stock_level": 400,
+            "competitor_price": 155
+          },
+          {
+            "product_id": "P3",
+            "name": "Festive Sweet Box 500g",
+            "our_price": 350,
+            "sales_last_week": 60,
+            "sales_this_week": 95,
+            "stock_level": 40,
+            "competitor_price": 320
+          },
+          {
+            "product_id": "P4",
+            "name": "LED String Lights",
+            "our_price": 450,
+            "sales_last_week": 30,
+            "sales_this_week": 70,
+            "stock_level": 25,
+            "competitor_price": 480
+          }
+        ]
+      },
+      "analyst": {
+        "P1": {
+          "summary": "Sales rose 25% last week. Inventory at 4 days of stock. Competitor is priced lower at INR 590.",
+          "confidence": 0.98,
+          "data_sources": [
+            "POS",
+            "WMS",
+            "CompetitorAPI"
+          ],
+          "audit_trail": {
+            "timestamp": "2026-09-25T10:23:11.231323",
+            "user_who_ran_it": "system_auto",
+            "data_hash": "522d3191d5d1ae708854c4a6c6270aea"
+          }
+        },
+        "P2": {
+          "summary": "Sales dipped 5% last week. Inventory at 15 days of stock. Competitor is priced lower at INR 155.",
+          "confidence": 0.98,
+          "data_sources": [
+            "POS",
+            "WMS",
+            "CompetitorAPI"
+          ],
+          "audit_trail": {
+            "timestamp": "2026-09-25T10:23:11.231414",
+            "user_who_ran_it": "system_auto",
+            "data_hash": "7fec1f91ced617ad420adcc876aaf384"
+          }
+        },
+        "P3": {
+          "summary": "Sales rose 58% last week. Inventory at 3 days of stock. Competitor is priced lower at INR 320.",
+          "confidence": 0.98,
+          "data_sources": [
+            "POS",
+            "WMS",
+            "CompetitorAPI"
+          ],
+          "audit_trail": {
+            "timestamp": "2026-09-25T10:23:11.231449",
+            "user_who_ran_it": "system_auto",
+            "data_hash": "9bf49c5a9652942f3291c3e0ac87a647"
+          }
+        },
+        "P4": {
+          "summary": "Sales rose 133% last week. Inventory at 2 days of stock. Competitor is priced higher at INR 480.",
+          "confidence": 0.98,
+          "data_sources": [
+            "POS",
+            "WMS",
+            "CompetitorAPI"
+          ],
+          "audit_trail": {
+            "timestamp": "2026-09-25T10:23:11.231475",
+            "user_who_ran_it": "system_auto",
+            "data_hash": "2a29c0af077367136cea0c9272699507"
+          }
+        }
+      },
+      "pricing": {
+        "P1": {
+          "action": "increase",
+          "percentage": 2.9,
+          "new_price": 638,
+          "expected_volume": 144,
+          "expected_weekly_profit": 14150,
+          "reasoning": "Festival demand spike absorbs price changes",
+          "confidence": 0.72,
+          "risk": "If festival is weaker than expected, demand may not hit projections"
+        },
+        "P2": {
+          "action": "increase",
+          "percentage": 0.6,
+          "new_price": 166,
+          "expected_volume": 202,
+          "expected_weekly_profit": 5653,
+          "reasoning": "Festival demand spike absorbs price changes",
+          "confidence": 0.72,
+          "risk": "If festival is weaker than expected, demand may not hit projections"
+        },
+        "P3": {
+          "action": "decrease",
+          "percentage": -6.6,
+          "new_price": 327,
+          "expected_volume": 183,
+          "expected_weekly_profit": 12270,
+          "reasoning": "Festival demand spike absorbs price changes",
+          "confidence": 0.72,
+          "risk": "If festival is weaker than expected, demand may not hit projections"
+        },
+        "P4": {
+          "action": "increase",
+          "percentage": 8.7,
+          "new_price": 489,
+          "expected_volume": 73,
+          "expected_weekly_profit": 12390,
+          "reasoning": "Festival demand spike absorbs price changes",
+          "confidence": 0.72,
+          "risk": "If festival is weaker than expected, demand may not hit projections"
+        }
+      },
+      "inventory": {
+        "P1": {
+          "risk": "stockout",
+          "flag": true,
+          "days_until_issue": 4,
+          "current_inventory": 90,
+          "demanded_volume": 144,
+          "lead_time": 7,
+          "recommendation": "Don't implement price change until restock arrives or transfer is completed",
+          "confidence": 0.94
+        },
+        "P2": {
+          "risk": "none",
+          "flag": false,
+          "days_until_issue": 14,
+          "current_inventory": 400,
+          "demanded_volume": 202,
+          "lead_time": 7,
+          "recommendation": "Inventory levels are sufficient for proposed pricing",
+          "confidence": 0.95
+        },
+        "P3": {
+          "risk": "stockout",
+          "flag": true,
+          "days_until_issue": 2,
+          "current_inventory": 40,
+          "demanded_volume": 183,
+          "lead_time": 7,
+          "recommendation": "Don't implement price change until restock arrives or transfer is completed",
+          "confidence": 0.94
+        },
+        "P4": {
+          "risk": "stockout",
+          "flag": true,
+          "days_until_issue": 2,
+          "current_inventory": 25,
+          "demanded_volume": 73,
+          "lead_time": 7,
+          "recommendation": "Don't implement price change until restock arrives or transfer is completed",
+          "confidence": 0.94
+        }
+      },
+      "boss_md": "## 📊 FINAL RECOMMENDATION — Coimbatore Central (S1)\n\n### DATA ANALYST (Factual Summary)\n**Basmati Rice 5kg**: Sales rose 25% last week. Inventory at 4 days of stock. Competitor is priced lower at INR 590. *(Confidence: 0.98)*\n**Sunflower Oil 1L**: Sales dipped 5% last week. Inventory at 15 days of stock. Competitor is priced lower at INR 155. *(Confidence: 0.98)*\n**Festive Sweet Box 500g**: Sales rose 58% last week. Inventory at 3 days of stock. Competitor is priced lower at INR 320. *(Confidence: 0.98)*\n**LED String Lights**: Sales rose 133% last week. Inventory at 2 days of stock. Competitor is priced higher at INR 480. *(Confidence: 0.98)*\n\n### PRICING AI (Recommendations)\n**Basmati Rice 5kg**: INCREASE by 2.9% to ₹638. Expected Vol: 144. Festival demand spike absorbs price changes\n**Sunflower Oil 1L**: INCREASE by 0.6% to ₹166. Expected Vol: 202. Festival demand spike absorbs price changes\n**Festive Sweet Box 500g**: DECREASE by -6.6% to ₹327. Expected Vol: 183. Festival demand spike absorbs price changes\n**LED String Lights**: INCREASE by 8.7% to ₹489. Expected Vol: 73. Festival demand spike absorbs price changes\n\n### INVENTORY AI (Risk Flags)\n⚠️ **Basmati Rice 5kg**: STOCKOUT RISK (in 4 days). Don't implement price change until restock arrives or transfer is completed\n⚠️ **Festive Sweet Box 500g**: STOCKOUT RISK (in 2 days). Don't implement price change until restock arrives or transfer is completed\n⚠️ **LED String Lights**: STOCKOUT RISK (in 2 days). Don't implement price change until restock arrives or transfer is completed\n\n### LOGISTICS AI (Transfers)\n🚛 **INCOMING**: Receive 54 units of Basmati Rice 5kg from Store S2. Cost: ₹240, ROI: 2111%\n🚛 **INCOMING**: Receive 80 units of Festive Sweet Box 500g from Store S2. Cost: ₹308, ROI: 1642%\n🚛 **INCOMING**: Receive 41 units of LED String Lights from Store S2. Cost: ₹206, ROI: 3278%\n🚛 **INCOMING**: Receive 7 units of LED String Lights from Store S3. Cost: ₹138, ROI: 761%\n"
+    },
+    "S2": {
+      "store": {
+        "store_id": "S2",
+        "store_name": "Tiruppur Mall",
+        "festival_in_3_days": false,
+        "festival_name": null,
+        "products": [
+          {
+            "product_id": "P1",
+            "name": "Basmati Rice 5kg",
+            "our_price": 620,
+            "sales_last_week": 110,
+            "sales_this_week": 85,
+            "stock_level": 300,
+            "competitor_price": 585
+          },
+          {
+            "product_id": "P2",
+            "name": "Sunflower Oil 1L",
+            "our_price": 165,
+            "sales_last_week": 150,
+            "sales_this_week": 155,
+            "stock_level": 220,
+            "competitor_price": 165
+          },
+          {
+            "product_id": "P3",
+            "name": "Festive Sweet Box 500g",
+            "our_price": 350,
+            "sales_last_week": 40,
+            "sales_this_week": 38,
+            "stock_level": 120,
+            "competitor_price": 340
+          },
+          {
+            "product_id": "P4",
+            "name": "LED String Lights",
+            "our_price": 450,
+            "sales_last_week": 20,
+            "sales_this_week": 22,
+            "stock_level": 60,
+            "competitor_price": 470
+          }
+        ]
+      },
+      "analyst": {
+        "P1": {
+          "summary": "Sales dipped 23% last week. Inventory at 25 days of stock. Competitor is priced lower at INR 585.",
+          "confidence": 0.98,
+          "data_sources": [
+            "POS",
+            "WMS",
+            "CompetitorAPI"
+          ],
+          "audit_trail": {
+            "timestamp": "2026-09-25T10:23:11.232349",
+            "user_who_ran_it": "system_auto",
+            "data_hash": "dff74a34c1c69ae4a24a18b04a32dade"
+          }
+        },
+        "P2": {
+          "summary": "Sales rose 3% last week. Inventory at 10 days of stock. Competitor matches our price at INR 165.",
+          "confidence": 0.98,
+          "data_sources": [
+            "POS",
+            "WMS",
+            "CompetitorAPI"
+          ],
+          "audit_trail": {
+            "timestamp": "2026-09-25T10:23:11.232384",
+            "user_who_ran_it": "system_auto",
+            "data_hash": "76b00b59a826e67ac1f5d0d9a11de2a4"
+          }
+        },
+        "P3": {
+          "summary": "Sales dipped 5% last week. Inventory at 22 days of stock. Competitor is priced lower at INR 340.",
+          "confidence": 0.98,
+          "data_sources": [
+            "POS",
+            "WMS",
+            "CompetitorAPI"
+          ],
+          "audit_trail": {
+            "timestamp": "2026-09-25T10:23:11.232408",
+            "user_who_ran_it": "system_auto",
+            "data_hash": "3f5db731ffa40d2986108dcba989a2a7"
+          }
+        },
+        "P4": {
+          "summary": "Sales rose 10% last week. Inventory at 19 days of stock. Competitor is priced higher at INR 470.",
+          "confidence": 0.98,
+          "data_sources": [
+            "POS",
+            "WMS",
+            "CompetitorAPI"
+          ],
+          "audit_trail": {
+            "timestamp": "2026-09-25T10:23:11.232430",
+            "user_who_ran_it": "system_auto",
+            "data_hash": "d2b622af68386bf0aa1822f24f51a8f4"
+          }
+        }
+      },
+      "pricing": {
+        "P1": {
+          "action": "increase",
+          "percentage": 2.6,
+          "new_price": 636,
+          "expected_volume": 72,
+          "expected_weekly_profit": 6943,
+          "reasoning": "Calculated maximum profit point based on elasticity",
+          "confidence": 0.85,
+          "risk": "Competitor may react to price changes"
+        },
+        "P2": {
+          "action": "increase",
+          "percentage": 3.6,
+          "new_price": 171,
+          "expected_volume": 137,
+          "expected_weekly_profit": 4529,
+          "reasoning": "Calculated maximum profit point based on elasticity",
+          "confidence": 0.85,
+          "risk": "Competitor may react to price changes"
+        },
+        "P3": {
+          "action": "decrease",
+          "percentage": -0.9,
+          "new_price": 347,
+          "expected_volume": 40,
+          "expected_weekly_profit": 3461,
+          "reasoning": "Calculated maximum profit point based on elasticity",
+          "confidence": 0.85,
+          "risk": "Competitor may react to price changes"
+        },
+        "P4": {
+          "action": "increase",
+          "percentage": 6.4,
+          "new_price": 479,
+          "expected_volume": 19,
+          "expected_weekly_profit": 2974,
+          "reasoning": "Calculated maximum profit point based on elasticity",
+          "confidence": 0.85,
+          "risk": "Competitor may react to price changes"
+        }
+      },
+      "inventory": {
+        "P1": {
+          "risk": "none",
+          "flag": false,
+          "days_until_issue": 29,
+          "current_inventory": 300,
+          "demanded_volume": 72,
+          "lead_time": 7,
+          "recommendation": "Inventory levels are sufficient for proposed pricing",
+          "confidence": 0.95
+        },
+        "P2": {
+          "risk": "none",
+          "flag": false,
+          "days_until_issue": 11,
+          "current_inventory": 220,
+          "demanded_volume": 137,
+          "lead_time": 7,
+          "recommendation": "Inventory levels are sufficient for proposed pricing",
+          "confidence": 0.95
+        },
+        "P3": {
+          "risk": "none",
+          "flag": false,
+          "days_until_issue": 21,
+          "current_inventory": 120,
+          "demanded_volume": 40,
+          "lead_time": 7,
+          "recommendation": "Inventory levels are sufficient for proposed pricing",
+          "confidence": 0.95
+        },
+        "P4": {
+          "risk": "none",
+          "flag": false,
+          "days_until_issue": 22,
+          "current_inventory": 60,
+          "demanded_volume": 19,
+          "lead_time": 7,
+          "recommendation": "Inventory levels are sufficient for proposed pricing",
+          "confidence": 0.95
+        }
+      },
+      "boss_md": "## 📊 FINAL RECOMMENDATION — Tiruppur Mall (S2)\n\n### DATA ANALYST (Factual Summary)\n**Basmati Rice 5kg**: Sales dipped 23% last week. Inventory at 25 days of stock. Competitor is priced lower at INR 585. *(Confidence: 0.98)*\n**Sunflower Oil 1L**: Sales rose 3% last week. Inventory at 10 days of stock. Competitor matches our price at INR 165. *(Confidence: 0.98)*\n**Festive Sweet Box 500g**: Sales dipped 5% last week. Inventory at 22 days of stock. Competitor is priced lower at INR 340. *(Confidence: 0.98)*\n**LED String Lights**: Sales rose 10% last week. Inventory at 19 days of stock. Competitor is priced higher at INR 470. *(Confidence: 0.98)*\n\n### PRICING AI (Recommendations)\n**Basmati Rice 5kg**: INCREASE by 2.6% to ₹636. Expected Vol: 72. Calculated maximum profit point based on elasticity\n**Sunflower Oil 1L**: INCREASE by 3.6% to ₹171. Expected Vol: 137. Calculated maximum profit point based on elasticity\n**Festive Sweet Box 500g**: DECREASE by -0.9% to ₹347. Expected Vol: 40. Calculated maximum profit point based on elasticity\n**LED String Lights**: INCREASE by 6.4% to ₹479. Expected Vol: 19. Calculated maximum profit point based on elasticity\n\n### INVENTORY AI (Risk Flags)\n✅ No inventory risks flagged for proposed pricing.\n\n### LOGISTICS AI (Transfers)\n🚛 **OUTGOING**: Send 54 units of Basmati Rice 5kg to Store S1.\n🚛 **OUTGOING**: Send 80 units of Festive Sweet Box 500g to Store S1.\n🚛 **OUTGOING**: Send 41 units of LED String Lights to Store S1.\n🚛 **OUTGOING**: Send 51 units of Basmati Rice 5kg to Store S3.\n"
+    },
+    "S3": {
+      "store": {
+        "store_id": "S3",
+        "store_name": "Salem Bazaar",
+        "festival_in_3_days": true,
+        "festival_name": "Regional Harvest Festival",
+        "products": [
+          {
+            "product_id": "P1",
+            "name": "Basmati Rice 5kg",
+            "our_price": 620,
+            "sales_last_week": 90,
+            "sales_this_week": 92,
+            "stock_level": 35,
+            "competitor_price": 600
+          },
+          {
+            "product_id": "P2",
+            "name": "Sunflower Oil 1L",
+            "our_price": 165,
+            "sales_last_week": 130,
+            "sales_this_week": 80,
+            "stock_level": 500,
+            "competitor_price": 140
+          },
+          {
+            "product_id": "P3",
+            "name": "Festive Sweet Box 500g",
+            "our_price": 350,
+            "sales_last_week": 50,
+            "sales_this_week": 60,
+            "stock_level": 15,
+            "competitor_price": 330
+          },
+          {
+            "product_id": "P4",
+            "name": "LED String Lights",
+            "our_price": 450,
+            "sales_last_week": 45,
+            "sales_this_week": 48,
+            "stock_level": 200,
+            "competitor_price": 455
+          }
+        ]
+      },
+      "analyst": {
+        "P1": {
+          "summary": "Sales rose 2% last week. Inventory at 3 days of stock. Competitor is priced lower at INR 600.",
+          "confidence": 0.98,
+          "data_sources": [
+            "POS",
+            "WMS",
+            "CompetitorAPI"
+          ],
+          "audit_trail": {
+            "timestamp": "2026-09-25T10:23:11.233163",
+            "user_who_ran_it": "system_auto",
+            "data_hash": "bd7bf22068551aeb4fd9824f4447e327"
+          }
+        },
+        "P2": {
+          "summary": "Sales dipped 38% last week. Inventory at 44 days of stock. Competitor is priced lower at INR 140.",
+          "confidence": 0.98,
+          "data_sources": [
+            "POS",
+            "WMS",
+            "CompetitorAPI"
+          ],
+          "audit_trail": {
+            "timestamp": "2026-09-25T10:23:11.233188",
+            "user_who_ran_it": "system_auto",
+            "data_hash": "f325f1bc8b29f0e51b4eba9c18f2304a"
+          }
+        },
+        "P3": {
+          "summary": "Sales rose 20% last week. Inventory at 2 days of stock. Competitor is priced lower at INR 330.",
+          "confidence": 0.98,
+          "data_sources": [
+            "POS",
+            "WMS",
+            "CompetitorAPI"
+          ],
+          "audit_trail": {
+            "timestamp": "2026-09-25T10:23:11.233210",
+            "user_who_ran_it": "system_auto",
+            "data_hash": "b8e5068e1c0292ab80278aa09c723c06"
+          }
+        },
+        "P4": {
+          "summary": "Sales rose 7% last week. Inventory at 29 days of stock. Competitor is priced higher at INR 455.",
+          "confidence": 0.98,
+          "data_sources": [
+            "POS",
+            "WMS",
+            "CompetitorAPI"
+          ],
+          "audit_trail": {
+            "timestamp": "2026-09-25T10:23:11.233232",
+            "user_who_ran_it": "system_auto",
+            "data_hash": "f254fa6576f78e5640b8c88e8d7aeef5"
+          }
+        }
+      },
+      "pricing": {
+        "P1": {
+          "action": "increase",
+          "percentage": 3.5,
+          "new_price": 642,
+          "expected_volume": 86,
+          "expected_weekly_profit": 8757,
+          "reasoning": "Festival demand spike absorbs price changes",
+          "confidence": 0.72,
+          "risk": "If festival is weaker than expected, demand may not hit projections"
+        },
+        "P2": {
+          "action": "decrease",
+          "percentage": -3.0,
+          "new_price": 160,
+          "expected_volume": 113,
+          "expected_weekly_profit": 2480,
+          "reasoning": "Festival demand spike absorbs price changes",
+          "confidence": 0.72,
+          "risk": "If festival is weaker than expected, demand may not hit projections"
+        },
+        "P3": {
+          "action": "decrease",
+          "percentage": -3.7,
+          "new_price": 337,
+          "expected_volume": 96,
+          "expected_weekly_profit": 7406,
+          "reasoning": "Festival demand spike absorbs price changes",
+          "confidence": 0.72,
+          "risk": "If festival is weaker than expected, demand may not hit projections"
+        },
+        "P4": {
+          "action": "increase",
+          "percentage": 3.1,
+          "new_price": 464,
+          "expected_volume": 58,
+          "expected_weekly_profit": 8298,
+          "reasoning": "Festival demand spike absorbs price changes",
+          "confidence": 0.72,
+          "risk": "If festival is weaker than expected, demand may not hit projections"
+        }
+      },
+      "inventory": {
+        "P1": {
+          "risk": "stockout",
+          "flag": true,
+          "days_until_issue": 3,
+          "current_inventory": 35,
+          "demanded_volume": 86,
+          "lead_time": 7,
+          "recommendation": "Don't implement price change until restock arrives or transfer is completed",
+          "confidence": 0.94
+        },
+        "P2": {
+          "risk": "overstock",
+          "flag": true,
+          "days_until_issue": 31,
+          "current_inventory": 500,
+          "demanded_volume": 113,
+          "lead_time": 7,
+          "recommendation": "Consider further price reductions to liquidate excess inventory",
+          "confidence": 0.88
+        },
+        "P3": {
+          "risk": "stockout",
+          "flag": true,
+          "days_until_issue": 1,
+          "current_inventory": 15,
+          "demanded_volume": 96,
+          "lead_time": 7,
+          "recommendation": "Don't implement price change until restock arrives or transfer is completed",
+          "confidence": 0.94
+        },
+        "P4": {
+          "risk": "none",
+          "flag": false,
+          "days_until_issue": 24,
+          "current_inventory": 200,
+          "demanded_volume": 58,
+          "lead_time": 7,
+          "recommendation": "Inventory levels are sufficient for proposed pricing",
+          "confidence": 0.95
+        }
+      },
+      "boss_md": "## 📊 FINAL RECOMMENDATION — Salem Bazaar (S3)\n\n### DATA ANALYST (Factual Summary)\n**Basmati Rice 5kg**: Sales rose 2% last week. Inventory at 3 days of stock. Competitor is priced lower at INR 600. *(Confidence: 0.98)*\n**Sunflower Oil 1L**: Sales dipped 38% last week. Inventory at 44 days of stock. Competitor is priced lower at INR 140. *(Confidence: 0.98)*\n**Festive Sweet Box 500g**: Sales rose 20% last week. Inventory at 2 days of stock. Competitor is priced lower at INR 330. *(Confidence: 0.98)*\n**LED String Lights**: Sales rose 7% last week. Inventory at 29 days of stock. Competitor is priced higher at INR 455. *(Confidence: 0.98)*\n\n### PRICING AI (Recommendations)\n**Basmati Rice 5kg**: INCREASE by 3.5% to ₹642. Expected Vol: 86. Festival demand spike absorbs price changes\n**Sunflower Oil 1L**: DECREASE by -3.0% to ₹160. Expected Vol: 113. Festival demand spike absorbs price changes\n**Festive Sweet Box 500g**: DECREASE by -3.7% to ₹337. Expected Vol: 96. Festival demand spike absorbs price changes\n**LED String Lights**: INCREASE by 3.1% to ₹464. Expected Vol: 58. Festival demand spike absorbs price changes\n\n### INVENTORY AI (Risk Flags)\n⚠️ **Basmati Rice 5kg**: STOCKOUT RISK (in 3 days). Don't implement price change until restock arrives or transfer is completed\n⚠️ **Sunflower Oil 1L**: OVERSTOCK RISK (in 31 days). Consider further price reductions to liquidate excess inventory\n⚠️ **Festive Sweet Box 500g**: STOCKOUT RISK (in 1 days). Don't implement price change until restock arrives or transfer is completed\n\n### LOGISTICS AI (Transfers)\n🚛 **OUTGOING**: Send 7 units of LED String Lights to Store S1.\n🚛 **INCOMING**: Receive 51 units of Basmati Rice 5kg from Store S2. Cost: ₹248, ROI: 1994%\n"
+    }
+  },
+  "logistics": {
+    "transfers": [
+      {
+        "from_store": "S2",
+        "to_store": "S1",
+        "sku": "P1",
+        "qty": 54,
+        "distance_km": 43.3,
+        "transfer_cost": 240,
+        "profit_saved": 5306,
+        "roi_percent": 2111
+      },
+      {
+        "from_store": "S2",
+        "to_store": "S1",
+        "sku": "P3",
+        "qty": 80,
+        "distance_km": 43.3,
+        "transfer_cost": 308,
+        "profit_saved": 5364,
+        "roi_percent": 1642
+      },
+      {
+        "from_store": "S2",
+        "to_store": "S1",
+        "sku": "P4",
+        "qty": 41,
+        "distance_km": 43.3,
+        "transfer_cost": 206,
+        "profit_saved": 6959,
+        "roi_percent": 3278
+      },
+      {
+        "from_store": "S3",
+        "to_store": "S1",
+        "sku": "P4",
+        "qty": 7,
+        "distance_km": 90.5,
+        "transfer_cost": 138,
+        "profit_saved": 1188,
+        "roi_percent": 761
+      },
+      {
+        "from_store": "S2",
+        "to_store": "S3",
+        "sku": "P1",
+        "qty": 51,
+        "distance_km": 48.5,
+        "transfer_cost": 248,
+        "profit_saved": 5193,
+        "roi_percent": 1994
+      }
+    ],
+    "total_cost": 1140,
+    "total_roi": 22870
+  }
+}
