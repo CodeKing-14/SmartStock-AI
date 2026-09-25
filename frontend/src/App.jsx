@@ -1,122 +1,146 @@
-import { useState } from 'react'
-import heroImg from './assets/hero.png'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import './App.css'
+import React, { useState } from 'react';
+import Header from './components/Header';
+import Sidebar from './components/Sidebar';
+import BossAiPage from './components/BossAiPage';
+import DataAnalystAiPage from './components/DataAnalystAiPage';
+import PricingAiPage from './components/PricingAiPage';
+import InventoryAiPage from './components/InventoryAiPage';
+import LogisticsAiPage from './components/LogisticsAiPage';
+import { 
+  Crown, 
+  BarChart3, 
+  Tag, 
+  Boxes, 
+  Truck, 
+  CheckCircle2 
+} from 'lucide-react';
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [activePage, setActivePage] = useState('boss-ai');
+  const [toastMessage, setToastMessage] = useState(null);
+
+  const showToast = (msg) => {
+    setToastMessage(msg);
+    setTimeout(() => {
+      setToastMessage(null);
+    }, 4500);
+  };
+
+  const navTabs = [
+    { id: 'boss-ai', label: 'The Boss AI (Final Verdict)', icon: Crown, color: '#4f46e5' },
+    { id: 'data-ai', label: '1. Data Analyst AI', icon: BarChart3, color: '#2563eb' },
+    { id: 'pricing-ai', label: '2. Pricing AI', icon: Tag, color: '#059669' },
+    { id: 'inventory-ai', label: '3. Inventory AI', icon: Boxes, color: '#d97706' },
+    { id: 'logistics-ai', label: '4. Logistics AI', icon: Truck, color: '#7c3aed' },
+  ];
 
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+    <div className="app-container">
+      {/* Left Sidebar Navigation */}
+      <Sidebar 
+        activePage={activePage} 
+        setActivePage={setActivePage} 
+      />
 
-      <div className="ticks"></div>
+      {/* Main Content Area */}
+      <main className="app-main">
+        {/* Top Header */}
+        <Header 
+          activePage={activePage}
+          setActivePage={setActivePage}
+        />
 
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
+        {/* Dashboard Content Container */}
+        <div className="dashboard-content">
+          {/* Page Switcher Tabs */}
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            background: 'white',
+            padding: '6px',
+            borderRadius: 'var(--radius-lg)',
+            border: '1px solid var(--border-subtle)',
+            boxShadow: 'var(--shadow-xs)',
+            overflowX: 'auto'
+          }}>
+            {navTabs.map((tab) => {
+              const Icon = tab.icon;
+              const isActive = activePage === tab.id;
+              return (
+                <button
+                  key={tab.id}
+                  type="button"
+                  onClick={() => setActivePage(tab.id)}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    padding: '8px 16px',
+                    borderRadius: 'var(--radius-md)',
+                    border: 'none',
+                    background: isActive ? (tab.id === 'boss-ai' ? '#312e81' : tab.color) : 'transparent',
+                    color: isActive ? 'white' : 'var(--text-secondary)',
+                    fontWeight: isActive ? 700 : 500,
+                    fontSize: '13px',
+                    cursor: 'pointer',
+                    transition: 'all 0.15s ease',
+                    whiteSpace: 'nowrap'
+                  }}
                 >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
+                  <Icon size={16} />
+                  <span>{tab.label}</span>
+                </button>
+              );
+            })}
+          </div>
 
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+          {/* Conditional Rendering of 5 AI Pages */}
+          {activePage === 'boss-ai' && (
+            <BossAiPage 
+              onNavigateToPage={(pageId) => setActivePage(pageId)}
+              onTriggerToast={showToast}
+            />
+          )}
+
+          {activePage === 'data-ai' && (
+            <DataAnalystAiPage 
+              onBackToBoss={() => setActivePage('boss-ai')}
+              onNavigateToPage={(pageId) => setActivePage(pageId)}
+            />
+          )}
+
+          {activePage === 'pricing-ai' && (
+            <PricingAiPage 
+              onBackToBoss={() => setActivePage('boss-ai')}
+              onNavigateToPage={(pageId) => setActivePage(pageId)}
+            />
+          )}
+
+          {activePage === 'inventory-ai' && (
+            <InventoryAiPage 
+              onBackToBoss={() => setActivePage('boss-ai')}
+              onNavigateToPage={(pageId) => setActivePage(pageId)}
+            />
+          )}
+
+          {activePage === 'logistics-ai' && (
+            <LogisticsAiPage 
+              onBackToBoss={() => setActivePage('boss-ai')}
+            />
+          )}
+        </div>
+      </main>
+
+      {/* Floating Toast Notification */}
+      {toastMessage && (
+        <div className="toast-floating">
+          <CheckCircle2 size={18} color="#10b981" />
+          <span>{toastMessage}</span>
+        </div>
+      )}
+    </div>
+  );
 }
 
-export default App
+export default App;
